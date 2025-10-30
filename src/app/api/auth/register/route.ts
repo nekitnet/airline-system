@@ -1,0 +1,51 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+
+export async function POST(request: NextRequest) {
+    try {
+        const { username, password, role } = await request.json();
+
+        if (!username || !password || !role) {
+            return NextResponse.json(
+                { error: 'Все поля обязательны для заполнения' },
+                { status: 400 }
+            );
+        }
+
+        // Проверяем, существует ли пользователь
+        const existingUser = await db.user.findUnique({
+            where: { username }
+        });
+
+        if (existingUser) {
+            return NextResponse.json(
+                { error: 'Пользователь с таким логином уже существует' },
+                { status: 400 }
+            );
+        }
+
+        // Создаем пользователя
+        const user = await db.user.create({
+            data: {
+                username,
+                password, // В реальном приложении нужно хешировать пароли
+                role
+            }
+        });
+
+        return NextResponse.json({
+            message: 'Пользователь успешно зарегистрирован',
+            user: {
+                id: user.id,
+                username: user.username,
+                role: user.role
+            }
+        });
+    } catch (error) {
+        console.error('Ошибка регистрации:', error);
+        return NextResponse.json(
+            { error: 'Внутренняя ошибка сервера' },
+            { status: 500 }
+        );
+    }
+}
