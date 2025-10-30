@@ -3,11 +3,15 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plane, Ticket, User, Mail, Phone, CreditCard, Calendar, MapPin, LogOut } from 'lucide-react';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface Passenger {
     id: number;
@@ -38,10 +42,15 @@ interface Ticket {
 
 export default function PassengerDashboard() {
     const router = useRouter();
+    const { toast } = useToast();
     const [user, setUser] = useState<any>(null);
     const [passenger, setPassenger] = useState<Passenger | null>(null);
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [editForm, setEditForm] = useState({ name: '', passport: '', email: '', phone: '' });
+    const [detailsOpen, setDetailsOpen] = useState(false);
+    const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
@@ -70,6 +79,69 @@ export default function PassengerDashboard() {
             }
         } catch (error) {
             console.error('Ошибка при загрузке данных пассажира:', error);
+        }
+    };
+
+    const openEdit = () => {
+        if (!passenger) return;
+        setEditForm({ name: passenger.name, passport: passenger.passport, email: passenger.email, phone: passenger.phone });
+        setIsEditOpen(true);
+    };
+
+    const saveEdit = async () => {
+        if (!passenger) return;
+        try {
+            const res = await fetch(`/api/passengers/${passenger.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(editForm),
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setPassenger(data.passenger);
+                setIsEditOpen(false);
+                toast({ title: 'Профиль обновлен' });
+            } else {
+                const err = await res.json().catch(() => ({}));
+                toast({ title: 'Ошибка обновления', description: err?.error || 'Попробуйте позже' });
+            }
+        } catch {
+            toast({ title: 'Ошибка сети', description: 'Не удалось сохранить изменения' });
+        }
+    };
+
+    const payTicket = async (ticketId: number) => {
+        try {
+            const res = await fetch(`/api/tickets/${ticketId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'Оплачен' }),
+            });
+            if (res.ok) {
+                const { ticket } = await res.json();
+                setTickets(prev => prev.map(t => (t.id === ticket.id ? { ...t, status: ticket.status } : t)));
+                toast({ title: 'Оплата прошла успешно' });
+            } else {
+                const err = await res.json().catch(() => ({}));
+                toast({ title: 'Не удалось оплатить', description: err?.error || 'Попробуйте позже' });
+            }
+        } catch {
+            toast({ title: 'Ошибка', description: 'Не удалось выполнить оплату' });
+        }
+    };
+
+    const openDetails = (ticket: Ticket) => {
+        setSelectedTicket(ticket);
+        setDetailsOpen(true);
+    };
+
+    const copyBookingCode = async () => {
+        if (!selectedTicket) return;
+        try {
+            await navigator.clipboard.writeText(`TICKET-${selectedTicket.id}-${selectedTicket.seat}`);
+            toast({ title: 'Код брони скопирован' });
+        } catch {
+            toast({ title: 'Не удалось скопировать код' });
         }
     };
 
@@ -206,7 +278,7 @@ export default function PassengerDashboard() {
                                                 </div>
                                             </div>
                                             <div className="pt-4">
-                                                <Button variant="outline">Редактировать профиль</Button>
+                                                <Button variant="outline" onClick={openEdit}>Редактировать профиль</Button>
                                             </div>
                                         </div>
                                     ) : (
@@ -314,11 +386,11 @@ export default function PassengerDashboard() {
                                                     </div>
 
                                                     <div className="flex gap-2 pt-2">
-                                                        <Button variant="outline" size="sm" className="flex-1">
+                                                        <Button variant="outline" size="sm" className="flex-1" onClick={() => openDetails(ticket)}>
                                                             Подробнее
                                                         </Button>
                                                         {ticket.status === 'Забронирован' && (
-                                                            <Button size="sm" className="flex-1">
+                                                            <Button size="sm" className="flex-1" onClick={() => payTicket(ticket.id)}>
                                                                 Оплатить
                                                             </Button>
                                                         )}
@@ -332,6 +404,60 @@ export default function PassengerDashboard() {
                         </div>
                     </TabsContent>
                 </Tabs>
+
+                {/* Диалог редактирования профиля */}
+                <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Редактировать профиль</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-2">
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">ФИО</Label>
+                                <Input id="name" value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="passport">Паспорт</Label>
+                                <Input id="passport" value={editForm.passport} onChange={e => setEditForm({ ...editForm, passport: e.target.value })} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="email">Email</Label>
+                                <Input id="email" type="email" value={editForm.email} onChange={e => setEditForm({ ...editForm, email: e.target.value })} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="phone">Телефон</Label>
+                                <Input id="phone" value={editForm.phone} onChange={e => setEditForm({ ...editForm, phone: e.target.value })} />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setIsEditOpen(false)}>Отмена</Button>
+                            <Button onClick={saveEdit}>Сохранить</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Диалог подробностей билета */}
+                <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Билет #{selectedTicket?.id}</DialogTitle>
+                        </DialogHeader>
+                        {selectedTicket && (
+                            <div className="space-y-3">
+                                <div className="text-sm text-gray-700">Маршрут: {selectedTicket.flight.from} → {selectedTicket.flight.to}</div>
+                                <div className="text-sm text-gray-700">Вылет: {formatDateTime(selectedTicket.flight.date, selectedTicket.flight.time)}</div>
+                                <div className="text-sm text-gray-700">Самолёт: {selectedTicket.flight.plane}</div>
+                                <div className="text-sm text-gray-700">Место: {selectedTicket.seat}</div>
+                                <div className="text-sm text-gray-700">Статус: {selectedTicket.status}</div>
+                                <div className="text-sm font-semibold text-sky-700">Цена: {selectedTicket.price.toLocaleString('ru-RU')} ₽</div>
+                                <div className="flex gap-2 pt-2">
+                                    <Button variant="outline" onClick={copyBookingCode}>Скопировать код брони</Button>
+                                    <Button onClick={() => { setDetailsOpen(false); router.push(`/flights/${selectedTicket.flight.id}`); }}>Открыть детали рейса</Button>
+                                </div>
+                            </div>
+                        )}
+                    </DialogContent>
+                </Dialog>
             </main>
         </div>
     );

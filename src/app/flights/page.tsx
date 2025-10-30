@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -30,6 +32,8 @@ export default function Flights() {
     const [statusFilter, setStatusFilter] = useState('all');
     const [fromFilter, setFromFilter] = useState('');
     const [toFilter, setToFilter] = useState('');
+    const router = useRouter();
+    const { toast } = useToast();
 
     useEffect(() => {
         fetchFlights();
@@ -111,6 +115,44 @@ export default function Flights() {
             hour: '2-digit',
             minute: '2-digit'
         });
+    };
+
+    const handleBuy = async (flight: Flight) => {
+        const userRaw = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+        if (!userRaw) {
+            router.push('/login');
+            return;
+        }
+        const user = JSON.parse(userRaw);
+        if (user.role !== 'passenger') {
+            toast({ title: 'Доступ ограничен', description: 'Покупка доступна только пассажирам.' });
+            return;
+        }
+        try {
+            const pRes = await fetch(`/api/passengers/user/${user.id}`);
+            if (!pRes.ok) {
+                toast({ title: 'Нет профиля пассажира', description: 'Заполните профиль пассажира в личном кабинете.' });
+                router.push('/passenger');
+                return;
+            }
+            const { passenger } = await pRes.json();
+            const seat = `A${Math.floor(Math.random() * 100) + 1}`;
+            const price = flight.price ?? 0;
+            const tRes = await fetch('/api/tickets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ flightId: flight.id, passengerId: passenger.id, userId: user.id, seat, price }),
+            });
+            if (tRes.ok) {
+                toast({ title: 'Билет забронирован', description: 'Перейдите в раздел "Мои билеты" для оплаты.' });
+                router.push('/passenger');
+            } else {
+                const err = await tRes.json().catch(() => ({}));
+                toast({ title: 'Не удалось оформить билет', description: err?.error || 'Попробуйте позже' });
+            }
+        } catch (e) {
+            toast({ title: 'Ошибка', description: 'Не удалось выполнить операцию.' });
+        }
     };
 
     if (loading) {
@@ -284,11 +326,11 @@ export default function Flights() {
                                         )}
 
                                         <div className="flex gap-2 pt-2">
-                                            <Button className="flex-1">
-                                                Подробнее
-                                            </Button>
+                                            <Link href={`/flights/${flight.id}`} className="flex-1">
+                                                <Button className="w-full">Подробнее</Button>
+                                            </Link>
                                             {flight.status === 'В ожидании' && (
-                                                <Button variant="outline">
+                                                <Button variant="outline" onClick={() => handleBuy(flight)}>
                                                     Купить билет
                                                 </Button>
                                             )}

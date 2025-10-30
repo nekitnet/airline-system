@@ -3,10 +3,10 @@ import { db } from '@/lib/db';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { userId: string } }
+    { params }: { params: { userld: string } }
 ) {
     try {
-        const userId = parseInt(params.userId);
+        const userId = parseInt(params.userld);
 
         if (isNaN(userId)) {
             return NextResponse.json(

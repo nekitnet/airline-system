@@ -7,6 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
     Plane,
     Users,
@@ -60,11 +65,29 @@ interface Ticket {
 
 export default function AdminDashboard() {
     const router = useRouter();
+    const { toast } = useToast();
     const [user, setUser] = useState<any>(null);
     const [flights, setFlights] = useState<Flight[]>([]);
     const [staff, setStaff] = useState<Staff[]>([]);
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const [addFlightOpen, setAddFlightOpen] = useState(false);
+    const [editFlightOpen, setEditFlightOpen] = useState(false);
+    const [statusOpen, setStatusOpen] = useState(false);
+    const [assignOpen, setAssignOpen] = useState(false);
+    const [editStaffOpen, setEditStaffOpen] = useState(false);
+    const [ticketEditOpen, setTicketEditOpen] = useState(false);
+
+    const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
+    const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
+    const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+
+    const [flightForm, setFlightForm] = useState({ from: '', to: '', date: '', time: '', plane: '', price: '' });
+    const [statusValue, setStatusValue] = useState('В ожидании');
+    const [assignStaffIds, setAssignStaffIds] = useState<number[]>([]);
+    const [staffForm, setStaffForm] = useState({ name: '', role: 'Пилот', email: '', phone: '' });
+    const [ticketStatus, setTicketStatus] = useState('Забронирован');
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
@@ -232,7 +255,7 @@ export default function AdminDashboard() {
                         <div className="space-y-6">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-xl font-semibold">Управление рейсами</h2>
-                                <Button>
+                                <Button onClick={() => { setFlightForm({ from: '', to: '', date: '', time: '', plane: '', price: '' }); setAddFlightOpen(true); }}>
                                     <Plus className="h-4 w-4 mr-2" />
                                     Добавить рейс
                                 </Button>
@@ -272,11 +295,11 @@ export default function AdminDashboard() {
                                                 </div>
 
                                                 <div className="flex gap-2 pt-2">
-                                                    <Button variant="outline" size="sm">
+                                                    <Button variant="outline" size="sm" onClick={() => { setSelectedFlight(flight); setFlightForm({ from: flight.from, to: flight.to, date: flight.date, time: flight.time, plane: flight.plane, price: String((flight as any).price ?? '') }); setEditFlightOpen(true); }}>
                                                         <Edit className="h-4 w-4 mr-1" />
                                                         Изменить
                                                     </Button>
-                                                    <Button variant="outline" size="sm">
+                                                    <Button variant="outline" size="sm" onClick={() => { setSelectedFlight(flight); setStatusValue(flight.status); setStatusOpen(true); }}>
                                                         Изменить статус
                                                     </Button>
                                                 </div>
@@ -293,7 +316,7 @@ export default function AdminDashboard() {
                         <div className="space-y-6">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-xl font-semibold">Управление персоналом</h2>
-                                <Button>
+                                <Button onClick={() => router.push('/admin/staff')}>
                                     <Plus className="h-4 w-4 mr-2" />
                                     Добавить сотрудника
                                 </Button>
@@ -327,11 +350,11 @@ export default function AdminDashboard() {
                                                 )}
 
                                                 <div className="flex gap-2 pt-2">
-                                                    <Button variant="outline" size="sm">
+                                                    <Button variant="outline" size="sm" onClick={() => { setSelectedStaff(person); setStaffForm({ name: person.name, role: person.role, email: person.email || '', phone: person.phone || '' }); setEditStaffOpen(true); }}>
                                                         <Edit className="h-4 w-4 mr-1" />
                                                         Изменить
                                                     </Button>
-                                                    <Button variant="outline" size="sm">
+                                                    <Button variant="outline" size="sm" onClick={() => { setSelectedStaff(person); setAssignStaffIds([]); setAssignOpen(true); }}>
                                                         Назначить на рейс
                                                     </Button>
                                                 </div>
@@ -390,11 +413,11 @@ export default function AdminDashboard() {
                                                 </div>
 
                                                 <div className="flex gap-2 pt-2">
-                                                    <Button variant="outline" size="sm">
+                                                    <Button variant="outline" size="sm" onClick={() => { setSelectedTicket(ticket); setTicketStatus(ticket.status); setTicketEditOpen(true); }}>
                                                         <Edit className="h-4 w-4 mr-1" />
                                                         Изменить
                                                     </Button>
-                                                    <Button variant="outline" size="sm">
+                                                    <Button variant="outline" size="sm" onClick={async () => { await fetch(`/api/tickets/${ticket.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'Отменён' }) }); toast({ title: 'Билет отменен' }); fetchDashboardData(); }}>
                                                         <Trash2 className="h-4 w-4 mr-1" />
                                                         Отменить
                                                     </Button>
@@ -407,6 +430,248 @@ export default function AdminDashboard() {
                         </div>
                     </TabsContent>
                 </Tabs>
+
+                {/* Диалог: Добавить рейс */}
+                <Dialog open={addFlightOpen} onOpenChange={setAddFlightOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Добавить рейс</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-3">
+                            <div>
+                                <Label>Откуда</Label>
+                                <Input value={flightForm.from} onChange={e => setFlightForm({ ...flightForm, from: e.target.value })} />
+                            </div>
+                            <div>
+                                <Label>Куда</Label>
+                                <Input value={flightForm.to} onChange={e => setFlightForm({ ...flightForm, to: e.target.value })} />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <Label>Дата</Label>
+                                    <Input type="date" value={flightForm.date} onChange={e => setFlightForm({ ...flightForm, date: e.target.value })} />
+                                </div>
+                                <div>
+                                    <Label>Время</Label>
+                                    <Input type="time" value={flightForm.time} onChange={e => setFlightForm({ ...flightForm, time: e.target.value })} />
+                                </div>
+                            </div>
+                            <div>
+                                <Label>Самолёт</Label>
+                                <Input value={flightForm.plane} onChange={e => setFlightForm({ ...flightForm, plane: e.target.value })} />
+                            </div>
+                            <div>
+                                <Label>Цена</Label>
+                                <Input type="number" value={flightForm.price} onChange={e => setFlightForm({ ...flightForm, price: e.target.value })} />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setAddFlightOpen(false)}>Отмена</Button>
+                            <Button onClick={async () => {
+                                const res = await fetch('/api/flights', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...flightForm, price: flightForm.price ? Number(flightForm.price) : null }) });
+                                if (res.ok) { toast({ title: 'Рейс создан' }); setAddFlightOpen(false); fetchDashboardData(); } else { const err = await res.json().catch(() => ({})); toast({ title: 'Ошибка', description: err?.error || 'Не удалось создать рейс' }); }
+                            }}>Создать</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Диалог: Изменить рейс */}
+                <Dialog open={editFlightOpen} onOpenChange={setEditFlightOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Изменить рейс #{selectedFlight?.id}</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-3">
+                            <div>
+                                <Label>Откуда</Label>
+                                <Input value={flightForm.from} onChange={e => setFlightForm({ ...flightForm, from: e.target.value })} />
+                            </div>
+                            <div>
+                                <Label>Куда</Label>
+                                <Input value={flightForm.to} onChange={e => setFlightForm({ ...flightForm, to: e.target.value })} />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <Label>Дата</Label>
+                                    <Input type="date" value={flightForm.date} onChange={e => setFlightForm({ ...flightForm, date: e.target.value })} />
+                                </div>
+                                <div>
+                                    <Label>Время</Label>
+                                    <Input type="time" value={flightForm.time} onChange={e => setFlightForm({ ...flightForm, time: e.target.value })} />
+                                </div>
+                            </div>
+                            <div>
+                                <Label>Самолёт</Label>
+                                <Input value={flightForm.plane} onChange={e => setFlightForm({ ...flightForm, plane: e.target.value })} />
+                            </div>
+                            <div>
+                                <Label>Цена</Label>
+                                <Input type="number" value={flightForm.price} onChange={e => setFlightForm({ ...flightForm, price: e.target.value })} />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setEditFlightOpen(false)}>Отмена</Button>
+                            <Button onClick={async () => {
+                                if (!selectedFlight) return;
+                                const res = await fetch(`/api/flights/${selectedFlight.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...flightForm, price: flightForm.price === '' ? null : Number(flightForm.price) }) });
+                                if (res.ok) { toast({ title: 'Рейс обновлен' }); setEditFlightOpen(false); fetchDashboardData(); } else { const err = await res.json().catch(() => ({})); toast({ title: 'Ошибка', description: err?.error || 'Не удалось обновить рейс' }); }
+                            }}>Сохранить</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Диалог: Изменить статус рейса */}
+                <Dialog open={statusOpen} onOpenChange={setStatusOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Изменить статус рейса #{selectedFlight?.id}</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-3">
+                            <Label>Статус</Label>
+                            <Select value={statusValue} onValueChange={setStatusValue}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Выберите статус" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="В ожидании">В ожидании</SelectItem>
+                                    <SelectItem value="В пути">В пути</SelectItem>
+                                    <SelectItem value="Задержан">Задержан</SelectItem>
+                                    <SelectItem value="Завершён">Завершён</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setStatusOpen(false)}>Отмена</Button>
+                            <Button onClick={async () => {
+                                if (!selectedFlight) return;
+                                const res = await fetch(`/api/flights/${selectedFlight.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: statusValue }) });
+                                if (res.ok) { toast({ title: 'Статус обновлен' }); setStatusOpen(false); fetchDashboardData(); } else { const err = await res.json().catch(() => ({})); toast({ title: 'Ошибка', description: err?.error || 'Не удалось обновить статус' }); }
+                            }}>Сохранить</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Диалог: Назначить сотрудника на рейс */}
+                <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Назначить {selectedStaff?.name} на рейс</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-3">
+                            <Label>Выберите рейс</Label>
+                            <Select value={selectedFlight ? String(selectedFlight.id) : ''} onValueChange={(v) => setSelectedFlight(flights.find(f => String(f.id) === v) || null)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Выберите рейс" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {flights.map(f => (
+                                        <SelectItem key={f.id} value={String(f.id)}>
+                                            #{f.id} {f.from} → {f.to}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Label>Состав экипажа</Label>
+                            <div className="max-h-48 overflow-auto space-y-2 p-2 border rounded-md">
+                                {staff.map(s => (
+                                    <label key={s.id} className="flex items-center gap-2 text-sm">
+                                        <input type="checkbox" checked={assignStaffIds.includes(s.id) || (!!selectedFlight && selectedFlight.crew.includes(s.id)) || (selectedStaff && selectedStaff.id === s.id)} onChange={(e) => {
+                                            const checked = e.target.checked;
+                                            const base = new Set(assignStaffIds);
+                                            if (checked) { base.add(s.id); } else { base.delete(s.id); }
+                                            setAssignStaffIds(Array.from(base));
+                                        }} />
+                                        <span>{s.name} — {s.role}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setAssignOpen(false)}>Отмена</Button>
+                            <Button onClick={async () => {
+                                if (!selectedFlight) { toast({ title: 'Выберите рейс' }); return; }
+                                const finalIds = Array.from(new Set([...(selectedFlight.crew || []), ...(assignStaffIds || []), ...(selectedStaff ? [selectedStaff.id] : [])]));
+                                const res = await fetch(`/api/flights/${selectedFlight.id}/crew`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ staffIds: finalIds }) });
+                                if (res.ok) { toast({ title: 'Экипаж обновлен' }); setAssignOpen(false); fetchDashboardData(); } else { const err = await res.json().catch(() => ({})); toast({ title: 'Ошибка', description: err?.error || 'Не удалось обновить экипаж' }); }
+                            }}>Сохранить</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Диалог: Изменить сотрудника */}
+                <Dialog open={editStaffOpen} onOpenChange={setEditStaffOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Изменить сотрудника #{selectedStaff?.id}</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-3">
+                            <div>
+                                <Label>ФИО</Label>
+                                <Input value={staffForm.name} onChange={e => setStaffForm({ ...staffForm, name: e.target.value })} />
+                            </div>
+                            <div>
+                                <Label>Должность</Label>
+                                <Select value={staffForm.role} onValueChange={(v) => setStaffForm({ ...staffForm, role: v })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Выберите должность" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Пилот">Пилот</SelectItem>
+                                        <SelectItem value="Стюардесса">Стюардесса</SelectItem>
+                                        <SelectItem value="Инженер">Инженер</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label>Email</Label>
+                                <Input type="email" value={staffForm.email} onChange={e => setStaffForm({ ...staffForm, email: e.target.value })} />
+                            </div>
+                            <div>
+                                <Label>Телефон</Label>
+                                <Input value={staffForm.phone} onChange={e => setStaffForm({ ...staffForm, phone: e.target.value })} />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setEditStaffOpen(false)}>Отмена</Button>
+                            <Button onClick={async () => {
+                                if (!selectedStaff) return;
+                                const res = await fetch(`/api/staff/${selectedStaff.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(staffForm) });
+                                if (res.ok) { toast({ title: 'Сотрудник обновлен' }); setEditStaffOpen(false); fetchDashboardData(); } else { const err = await res.json().catch(() => ({})); toast({ title: 'Ошибка', description: err?.error || 'Не удалось обновить сотрудника' }); }
+                            }}>Сохранить</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Диалог: Изменить билет */}
+                <Dialog open={ticketEditOpen} onOpenChange={setTicketEditOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Изменить билет #{selectedTicket?.id}</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-3">
+                            <Label>Статус</Label>
+                            <Select value={ticketStatus} onValueChange={setTicketStatus}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Выберите статус" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Забронирован">Забронирован</SelectItem>
+                                    <SelectItem value="Оплачен">Оплачен</SelectItem>
+                                    <SelectItem value="Отменён">Отменён</SelectItem>
+                                    <SelectItem value="Использован">Использован</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setTicketEditOpen(false)}>Отмена</Button>
+                            <Button onClick={async () => {
+                                if (!selectedTicket) return;
+                                const res = await fetch(`/api/tickets/${selectedTicket.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: ticketStatus }) });
+                                if (res.ok) { toast({ title: 'Билет обновлен' }); setTicketEditOpen(false); fetchDashboardData(); } else { const err = await res.json().catch(() => ({})); toast({ title: 'Ошибка', description: err?.error || 'Не удалось обновить билет' }); }
+                            }}>Сохранить</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </main>
         </div>
     );
