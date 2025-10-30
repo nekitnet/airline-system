@@ -263,7 +263,7 @@ export default function Home() {
                         </div>
                     </div>
                     <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                        <p>&copy; 2024 Система Авиакомпания. Все права защищены.</p>
+                        <p>&copy; 2025 Система Авиакомпания. Все права защищены.</p>
                     </div>
                 </div>
             </footer>
