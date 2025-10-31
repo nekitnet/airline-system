@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
     Users,
     Plus,
@@ -45,6 +45,8 @@ export default function StaffManagement() {
         email: '',
         phone: ''
     });
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [selected, setSelected] = useState<Staff | null>(null);
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
@@ -136,6 +138,24 @@ export default function StaffManagement() {
             }
         } catch (error) {
             console.error('Ошибка при удалении сотрудника:', error);
+        }
+    };
+
+    const handleUpdate = async () => {
+        if (!selected) return;
+        try {
+            const response = await fetch(`/api/staff/${selected.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            if (response.ok) {
+                await fetchStaff();
+                setIsEditDialogOpen(false);
+                setSelected(null);
+            }
+        } catch (error) {
+            console.error('Ошибка при обновлении сотрудника:', error);
         }
     };
 
@@ -389,7 +409,21 @@ export default function StaffManagement() {
                                         )}
 
                                         <div className="flex gap-2 pt-2">
-                                            <Button variant="outline" size="sm" className="flex-1">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="flex-1"
+                                                onClick={() => {
+                                                    setSelected(person);
+                                                    setFormData({
+                                                        name: person.name,
+                                                        role: person.role,
+                                                        email: person.email || '',
+                                                        phone: person.phone || ''
+                                                    });
+                                                    setIsEditDialogOpen(true);
+                                                }}
+                                            >
                                                 <Edit className="h-4 w-4 mr-1" />
                                                 Изменить
                                             </Button>
@@ -408,6 +442,59 @@ export default function StaffManagement() {
                     )}
                 </div>
             </main>
+            {/* Диалог: Изменить сотрудника */}
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Изменить сотрудника #{selected?.id}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-name">ФИО</Label>
+                            <Input
+                                id="edit-name"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-role">Должность</Label>
+                            <Select value={formData.role} onValueChange={(v) => setFormData({ ...formData, role: v })}>
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Пилот">Пилот</SelectItem>
+                                    <SelectItem value="Стюардесса">Стюардесса</SelectItem>
+                                    <SelectItem value="Инженер">Инженер</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-email">Email</Label>
+                            <Input
+                                id="edit-email"
+                                type="email"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-phone">Телефон</Label>
+                            <Input
+                                id="edit-phone"
+                                value={formData.phone}
+                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Отмена</Button>
+                        <Button onClick={handleUpdate}>Сохранить</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

@@ -59,12 +59,94 @@ async function main() {
         },
     });
 
+    // Дополнительные сотрудники
+    const pilot2 = await prisma.staff.create({
+        data: {
+            name: 'Иванов Сергей Николаевич',
+            role: 'Пилот',
+            email: 'pilot2@airline.ru',
+            phone: '+7 (999) 444-55-66',
+        },
+    });
+
+    const pilot3 = await prisma.staff.create({
+        data: {
+            name: 'Алексеев Дмитрий Андреевич',
+            role: 'Пилот',
+            email: 'pilot3@airline.ru',
+            phone: '+7 (999) 555-66-77',
+        },
+    });
+
+    const pilot4 = await prisma.staff.create({
+        data: {
+            name: 'Никитин Павел Константинович',
+            role: 'Пилот',
+            email: 'pilot4@airline.ru',
+            phone: '+7 (999) 666-77-88',
+        },
+    });
+
+    const pilot5 = await prisma.staff.create({
+        data: {
+            name: 'Громов Алексей Викторович',
+            role: 'Пилот',
+            email: 'pilot5@airline.ru',
+            phone: '+7 (999) 777-88-99',
+        },
+    });
+
+    const stewardess2 = await prisma.staff.create({
+        data: {
+            name: 'Ковалёва Мария Сергеевна',
+            role: 'Стюардесса',
+            email: 'stewardess2@airline.ru',
+            phone: '+7 (999) 888-99-00',
+        },
+    });
+
+    const stewardess3 = await prisma.staff.create({
+        data: {
+            name: 'Романова Елена Александровна',
+            role: 'Стюардесса',
+            email: 'stewardess3@airline.ru',
+            phone: '+7 (999) 000-11-22',
+        },
+    });
+
+    const stewardess4 = await prisma.staff.create({
+        data: {
+            name: 'Смирнова Ольга Дмитриевна',
+            role: 'Стюардесса',
+            email: 'stewardess4@airline.ru',
+            phone: '+7 (999) 111-22-44',
+        },
+    });
+
+    const stewardess5 = await prisma.staff.create({
+        data: {
+            name: 'Ильина Наталья Викторовна',
+            role: 'Стюардесса',
+            email: 'stewardess5@airline.ru',
+            phone: '+7 (999) 222-44-55',
+        },
+    });
+
+    const engineer2 = await prisma.staff.create({
+        data: {
+            name: 'Сорокин Игорь Павлович',
+            role: 'Инженер',
+            email: 'engineer2@airline.ru',
+            phone: '+7 (999) 333-55-66',
+        },
+    });
+
     // Создаем рейсы
     const flight1 = await prisma.flight.create({
         data: {
             from: 'Москва',
             to: 'Сочи',
-            date: '2024-12-25',
+            date: '2025-01-15',
             time: '12:00',
             status: 'В ожидании',
             plane: 'Airbus A320',
@@ -76,7 +158,7 @@ async function main() {
         data: {
             from: 'Санкт-Петербург',
             to: 'Краснодар',
-            date: '2024-12-26',
+            date: '2025-02-20',
             time: '09:30',
             status: 'В ожидании',
             plane: 'Boeing 737',
@@ -88,7 +170,7 @@ async function main() {
         data: {
             from: 'Москва',
             to: 'Екатеринбург',
-            date: '2024-12-25',
+            date: '2025-03-10',
             time: '15:45',
             status: 'В пути',
             plane: 'Airbus A321',
@@ -96,13 +178,77 @@ async function main() {
         },
     });
 
+    const flight4 = await prisma.flight.create({
+        data: {
+            from: 'Казань',
+            to: 'Новосибирск',
+            date: '2025-04-05',
+            time: '07:15',
+            status: 'В ожидании',
+            plane: 'Boeing 737 MAX',
+            price: 20000,
+        },
+    });
+
+    const flight5 = await prisma.flight.create({
+        data: {
+            from: 'Сочи',
+            to: 'Москва',
+            date: '2025-05-22',
+            time: '18:20',
+            status: 'В ожидании',
+            plane: 'Airbus A320neo',
+            price: 15500,
+        },
+    });
+
+    const flight6 = await prisma.flight.create({
+        data: {
+            from: 'Самара',
+            to: 'Санкт-Петербург',
+            date: '2025-06-12',
+            time: '10:40',
+            status: 'В ожидании',
+            plane: 'Boeing 757',
+            price: 17500,
+        },
+    });
+
     // Назначаем экипажи на рейсы
+    // Назначаем экипажи (на каждом рейсе минимум 2 пилота и стюардессы)
     await prisma.crewMember.createMany({
         data: [
+            // flight1
             { id: 1, flightId: flight1.id, staffId: pilot1.id },
-            { id: 2, flightId: flight1.id, staffId: stewardess1.id },
-            { id: 3, flightId: flight2.id, staffId: pilot1.id },
-            { id: 4, flightId: flight3.id, staffId: engineer1.id },
+            { id: 2, flightId: flight1.id, staffId: pilot2.id },
+            { id: 3, flightId: flight1.id, staffId: stewardess1.id },
+            { id: 4, flightId: flight1.id, staffId: stewardess2.id },
+            // flight2
+            { id: 1, flightId: flight2.id, staffId: pilot3.id },
+            { id: 2, flightId: flight2.id, staffId: pilot4.id },
+            { id: 3, flightId: flight2.id, staffId: stewardess3.id },
+            { id: 4, flightId: flight2.id, staffId: stewardess4.id },
+            // flight3
+            { id: 1, flightId: flight3.id, staffId: pilot5.id },
+            { id: 2, flightId: flight3.id, staffId: pilot1.id },
+            { id: 3, flightId: flight3.id, staffId: stewardess5.id },
+            { id: 4, flightId: flight3.id, staffId: stewardess2.id },
+            { id: 5, flightId: flight3.id, staffId: engineer1.id },
+            // flight4
+            { id: 1, flightId: flight4.id, staffId: pilot2.id },
+            { id: 2, flightId: flight4.id, staffId: pilot3.id },
+            { id: 3, flightId: flight4.id, staffId: stewardess1.id },
+            { id: 4, flightId: flight4.id, staffId: stewardess3.id },
+            // flight5
+            { id: 1, flightId: flight5.id, staffId: pilot4.id },
+            { id: 2, flightId: flight5.id, staffId: pilot5.id },
+            { id: 3, flightId: flight5.id, staffId: stewardess4.id },
+            { id: 4, flightId: flight5.id, staffId: stewardess5.id },
+            // flight6
+            { id: 1, flightId: flight6.id, staffId: pilot1.id },
+            { id: 2, flightId: flight6.id, staffId: pilot2.id },
+            { id: 3, flightId: flight6.id, staffId: stewardess2.id },
+            { id: 4, flightId: flight6.id, staffId: stewardess4.id },
         ],
     });
 
