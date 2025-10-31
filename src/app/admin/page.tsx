@@ -84,6 +84,8 @@ export default function AdminDashboard() {
     const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
 
     const [flightForm, setFlightForm] = useState({ from: '', to: '', date: '', time: '', plane: '', price: '' });
+    const [newFlightPilotIds, setNewFlightPilotIds] = useState<number[]>([]);
+    const [newFlightStewardessIds, setNewFlightStewardessIds] = useState<number[]>([]);
     const [statusValue, setStatusValue] = useState('В ожидании');
     const [assignStaffIds, setAssignStaffIds] = useState<number[]>([]);
     const [staffForm, setStaffForm] = useState({ name: '', role: 'Пилот', email: '', phone: '' });
@@ -255,7 +257,7 @@ export default function AdminDashboard() {
                         <div className="space-y-6">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-xl font-semibold">Управление рейсами</h2>
-                                <Button onClick={() => { setFlightForm({ from: '', to: '', date: '', time: '', plane: '', price: '' }); setAddFlightOpen(true); }}>
+                                <Button onClick={() => { setFlightForm({ from: '', to: '', date: '', time: '', plane: '', price: '' }); setNewFlightPilotIds([]); setNewFlightStewardessIds([]); setAddFlightOpen(true); }}>
                                     <Plus className="h-4 w-4 mr-2" />
                                     Добавить рейс
                                 </Button>
@@ -464,11 +466,59 @@ export default function AdminDashboard() {
                                 <Label>Цена</Label>
                                 <Input type="number" value={flightForm.price} onChange={e => setFlightForm({ ...flightForm, price: e.target.value })} />
                             </div>
+
+                            {/* Экипаж для нового рейса */}
+                            <div className="grid gap-2">
+                                <Label>Пилоты (минимум 2)</Label>
+                                <div className="max-h-40 overflow-auto p-2 border rounded-md space-y-2">
+                                    {staff.filter(s => s.role === 'Пилот').map(p => (
+                                        <label key={p.id} className="flex items-center gap-2 text-sm">
+                                            <input
+                                                type="checkbox"
+                                                checked={newFlightPilotIds.includes(p.id)}
+                                                onChange={(e) => {
+                                                    const set = new Set(newFlightPilotIds);
+                                                    if (e.target.checked) set.add(p.id); else set.delete(p.id);
+                                                    setNewFlightPilotIds(Array.from(set));
+                                                }}
+                                            />
+                                            <span>{p.name}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                                <div className="text-xs text-gray-500">Выбрано: {newFlightPilotIds.length}</div>
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label>Стюардессы (минимум 2)</Label>
+                                <div className="max-h-40 overflow-auto p-2 border rounded-md space-y-2">
+                                    {staff.filter(s => s.role === 'Стюардесса').map(st => (
+                                        <label key={st.id} className="flex items-center gap-2 text-sm">
+                                            <input
+                                                type="checkbox"
+                                                checked={newFlightStewardessIds.includes(st.id)}
+                                                onChange={(e) => {
+                                                    const set = new Set(newFlightStewardessIds);
+                                                    if (e.target.checked) set.add(st.id); else set.delete(st.id);
+                                                    setNewFlightStewardessIds(Array.from(set));
+                                                }}
+                                            />
+                                            <span>{st.name}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                                <div className="text-xs text-gray-500">Выбрано: {newFlightStewardessIds.length}</div>
+                            </div>
                         </div>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setAddFlightOpen(false)}>Отмена</Button>
                             <Button onClick={async () => {
-                                const res = await fetch('/api/flights', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...flightForm, price: flightForm.price ? Number(flightForm.price) : null }) });
+                                if (newFlightPilotIds.length < 2 || newFlightStewardessIds.length < 2) {
+                                    toast({ title: 'Требуется минимум 2 пилота и 2 стюардессы' });
+                                    return;
+                                }
+                                const crew = [...newFlightPilotIds, ...newFlightStewardessIds];
+                                const res = await fetch('/api/flights', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...flightForm, price: flightForm.price ? Number(flightForm.price) : null, crew }) });
                                 if (res.ok) { toast({ title: 'Рейс создан' }); setAddFlightOpen(false); fetchDashboardData(); } else { const err = await res.json().catch(() => ({})); toast({ title: 'Ошибка', description: err?.error || 'Не удалось создать рейс' }); }
                             }}>Создать</Button>
                         </DialogFooter>
