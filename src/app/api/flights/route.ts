@@ -4,27 +4,38 @@ import { db } from '@/lib/db';
 export async function GET() {
     try {
         const flights = await db.flight.findMany({
-            include: {
-                crew: {
-                    include: {
-                        staff: true
-                    }
-                },
-                tickets: {
-                    include: {
-                        passenger: true
-                    }
-                }
-            }
+            select: {
+                id: true,
+                from: true,
+                to: true,
+                date: true,
+                time: true,
+                status: true,
+                plane: true,
+                price: true,
+                crew: { select: { staffId: true } },
+            },
+            where: {
+                // только будущие/актуальные даты
+                date: { gte: '2025-10-31' }
+            },
+            orderBy: [{ date: 'asc' }, { time: 'asc' }],
+            take: 100
         });
 
-        // Форматируем данные для фронтенда
-        const formattedFlights = flights.map(flight => ({
-            ...flight,
-            crew: flight.crew.map(cm => cm.staff.id)
+        const formattedFlights = flights.map((flight) => ({
+            id: flight.id,
+            from: flight.from,
+            to: flight.to,
+            date: flight.date,
+            time: flight.time,
+            status: flight.status,
+            plane: flight.plane,
+            price: flight.price ?? undefined,
+            crew: flight.crew.map((c) => c.staffId),
         }));
 
-        return NextResponse.json({ flights: formattedFlights });
+        return NextResponse.json({ flights: formattedFlights }, { headers: { 'Cache-Control': 'no-store' } });
     } catch (error) {
         console.error('Ошибка получения рейсов:', error);
         return NextResponse.json(

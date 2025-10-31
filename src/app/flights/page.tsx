@@ -44,15 +44,17 @@ export default function Flights() {
     }, [flights, searchTerm, statusFilter, fromFilter, toFilter]);
 
     const fetchFlights = async () => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
         try {
-            const response = await fetch('/api/flights');
-            if (response.ok) {
-                const data = await response.json();
-                setFlights(data.flights || []);
-            }
+            const response = await fetch('/api/flights', { signal: controller.signal, cache: 'no-store' });
+            if (!response.ok) throw new Error('Не удалось получить список рейсов');
+            const data = await response.json();
+            setFlights(data.flights || []);
         } catch (error) {
             console.error('Ошибка при загрузке рейсов:', error);
         } finally {
+            clearTimeout(timeoutId);
             setLoading(false);
         }
     };
