@@ -43,7 +43,6 @@ export default function FlightDetailsPage() {
                 const found: Flight | undefined = (data.flights || []).find((f: Flight) => f.id === flightId);
                 setFlight(found || null);
             } catch (e) {
-                // ignore
             } finally {
                 setLoading(false);
             }

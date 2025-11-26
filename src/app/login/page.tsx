@@ -46,10 +46,8 @@ export default function Login() {
 
             const data = await response.json();
 
-            // Сохраняем пользователя в localStorage
             localStorage.setItem('user', JSON.stringify(data.user));
 
-            // Перенаправляем в соответствующий кабинет
             router.push(data.user.role === 'admin' ? '/admin' : '/passenger');
         } catch (err: any) {
             setError(err.message);

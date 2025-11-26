@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Ищем пользователя
         const user = await db.user.findUnique({
             where: { username }
         });

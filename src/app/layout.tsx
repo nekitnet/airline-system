@@ -47,6 +47,81 @@ export default function RootLayout({
         >
         {children}
         <Toaster />
+        <script
+            dangerouslySetInnerHTML={{
+                __html: `
+                    (function() {
+                        function hideNextIndicator() {
+                            const selectors = [
+                                '[data-nextjs-toast]',
+                                '.__next-dev-overlay',
+                                'a[href*="__nextjs"]',
+                                '#__next-build-watcher',
+                                'div[data-nextjs-toast]',
+                                'a[href*="__nextjs"]',
+                                'body > a[href*="__nextjs"]',
+                                'body > div[id*="__next"]'
+                            ];
+                            
+                            selectors.forEach(function(selector) {
+                                try {
+                                    const elements = document.querySelectorAll(selector);
+                                    elements.forEach(function(el) {
+                                        el.style.display = 'none';
+                                        el.style.visibility = 'hidden';
+                                        el.style.opacity = '0';
+                                        el.style.pointerEvents = 'none';
+                                        el.style.width = '0';
+                                        el.style.height = '0';
+                                        el.style.overflow = 'hidden';
+                                    });
+                                } catch(e) {}
+                            });
+                            
+                            const allElements = document.querySelectorAll('body > *');
+                            allElements.forEach(function(el) {
+                                if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+                                
+                                try {
+                                    const style = window.getComputedStyle(el);
+                                    const rect = el.getBoundingClientRect();
+                                    
+                                    if (style.position === 'fixed' && 
+                                        rect.bottom < 100 && 
+                                        rect.left < 100 &&
+                                        (el.textContent === 'N' || el.textContent.trim() === 'N' || 
+                                         el.href && el.href.includes('__nextjs'))) {
+                                        el.style.display = 'none';
+                                        el.style.visibility = 'hidden';
+                                        el.style.opacity = '0';
+                                        el.style.pointerEvents = 'none';
+                                        el.style.width = '0';
+                                        el.style.height = '0';
+                                        el.style.overflow = 'hidden';
+                                    }
+                                } catch(e) {}
+                            });
+                        }
+                        
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', hideNextIndicator);
+                        } else {
+                            hideNextIndicator();
+                        }
+                        
+                        setInterval(hideNextIndicator, 500);
+                        
+                        if (typeof MutationObserver !== 'undefined') {
+                            const observer = new MutationObserver(hideNextIndicator);
+                            observer.observe(document.body, {
+                                childList: true,
+                                subtree: true
+                            });
+                        }
+                    })();
+                `,
+            }}
+        />
         </body>
         </html>
     );

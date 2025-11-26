@@ -120,3 +120,52 @@
         @apply bg-background text-foreground;
     }
 }
+
+[data-nextjs-toast],
+[data-nextjs-toast] *,
+.__next-dev-overlay,
+.__next-dev-overlay *,
+a[href*="__nextjs"],
+a[href*="__nextjs"] *,
+div[data-nextjs-toast],
+div[data-nextjs-toast] *,
+#__next-build-watcher,
+#__next-build-watcher * {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+body > div[style*="position: fixed"][style*="bottom"][style*="left"],
+body > div[style*="position:fixed"][style*="bottom"][style*="left"],
+body > div[style*="position: fixed"][style*="bottom: 0"][style*="left: 0"],
+body > div[style*="position:fixed"][style*="bottom:0"][style*="left:0"],
+body > a[style*="position: fixed"][style*="bottom"][style*="left"],
+body > a[style*="position:fixed"][style*="bottom"][style*="left"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+body > div[style*="z-index"][style*="bottom"][style*="left"],
+body > a[style*="z-index"][style*="bottom"][style*="left"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+body > *:not(script):not(style) {
+    position: relative;
+}
+
+body > a[href*="__nextjs"],
+body > div[id*="__next"],
+body > div[class*="__next"] {
+    display: none !important;
+}

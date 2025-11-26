@@ -3,18 +3,16 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-    // Очистка данных для повторного сидирования в dev-среде
     await prisma.crewMember.deleteMany();
     await prisma.ticket.deleteMany();
     await prisma.flight.deleteMany();
     await prisma.passenger.deleteMany();
     await prisma.staff.deleteMany();
     await prisma.user.deleteMany();
-    // Создаем пользователей
     const adminUser = await prisma.user.create({
         data: {
             username: 'admin',
-            password: 'admin123', // В реальном приложении нужно хешировать пароли
+            password: 'admin123',
             role: 'admin',
         },
     });
@@ -22,12 +20,11 @@ async function main() {
     const passengerUser = await prisma.user.create({
         data: {
             username: 'ivanov',
-            password: '1234', // В реальном приложении нужно хешировать пароли
+            password: '1234',
             role: 'passenger',
         },
     });
 
-    // Создаем пассажира
     const passenger = await prisma.passenger.create({
         data: {
             name: 'Иванов Иван Иванович',
@@ -38,7 +35,6 @@ async function main() {
         },
     });
 
-    // Создаем сотрудников
     const pilot1 = await prisma.staff.create({
         data: {
             name: 'Петров Петр Петрович',
@@ -66,7 +62,6 @@ async function main() {
         },
     });
 
-    // Дополнительные сотрудники
     const pilot2 = await prisma.staff.create({
         data: {
             name: 'Иванов Сергей Николаевич',
@@ -148,7 +143,6 @@ async function main() {
         },
     });
 
-    // Создаем рейсы
     const flight1 = await prisma.flight.create({
         data: {
             from: 'Москва',
@@ -221,7 +215,6 @@ async function main() {
         },
     });
 
-    // Новые рейсы, начиная с 2025-10-31
     const flight7 = await prisma.flight.create({
         data: {
             from: 'Москва',
@@ -282,7 +275,6 @@ async function main() {
         },
     });
 
-    // Международные рейсы 2025
     const flight12 = await prisma.flight.create({
         data: {
             from: 'Москва',
@@ -391,7 +383,6 @@ async function main() {
         },
     });
 
-    // Дополнительные 20 рейсов (домашние и международные) после 2025-11-19
     const flight21 = await prisma.flight.create({
         data: { from: 'Москва', to: 'Париж', date: '2025-11-20', time: '12:10', status: 'В ожидании', plane: 'Airbus A321', price: 35000 },
     });
@@ -453,207 +444,165 @@ async function main() {
         data: { from: 'Сочи', to: 'Минеральные Воды', date: '2025-12-09', time: '15:35', status: 'В ожидании', plane: 'Embraer E190', price: 6000 },
     });
 
-    // Назначаем экипажи на рейсы
-    // Назначаем экипажи (на каждом рейсе минимум 2 пилота и стюардессы)
     await prisma.crewMember.createMany({
         data: [
-            // flight1
             { id: 1, flightId: flight1.id, staffId: pilot1.id },
             { id: 2, flightId: flight1.id, staffId: pilot2.id },
             { id: 3, flightId: flight1.id, staffId: stewardess1.id },
             { id: 4, flightId: flight1.id, staffId: stewardess2.id },
-            // flight2
             { id: 1, flightId: flight2.id, staffId: pilot3.id },
             { id: 2, flightId: flight2.id, staffId: pilot4.id },
             { id: 3, flightId: flight2.id, staffId: stewardess3.id },
             { id: 4, flightId: flight2.id, staffId: stewardess4.id },
-            // flight3
             { id: 1, flightId: flight3.id, staffId: pilot5.id },
             { id: 2, flightId: flight3.id, staffId: pilot1.id },
             { id: 3, flightId: flight3.id, staffId: stewardess5.id },
             { id: 4, flightId: flight3.id, staffId: stewardess2.id },
             { id: 5, flightId: flight3.id, staffId: engineer1.id },
-            // flight4
             { id: 1, flightId: flight4.id, staffId: pilot2.id },
             { id: 2, flightId: flight4.id, staffId: pilot3.id },
             { id: 3, flightId: flight4.id, staffId: stewardess1.id },
             { id: 4, flightId: flight4.id, staffId: stewardess3.id },
-            // flight5
             { id: 1, flightId: flight5.id, staffId: pilot4.id },
             { id: 2, flightId: flight5.id, staffId: pilot5.id },
             { id: 3, flightId: flight5.id, staffId: stewardess4.id },
             { id: 4, flightId: flight5.id, staffId: stewardess5.id },
-            // flight6
             { id: 1, flightId: flight6.id, staffId: pilot1.id },
             { id: 2, flightId: flight6.id, staffId: pilot2.id },
             { id: 3, flightId: flight6.id, staffId: stewardess2.id },
             { id: 4, flightId: flight6.id, staffId: stewardess4.id },
-            // flight7
             { id: 1, flightId: flight7.id, staffId: pilot3.id },
             { id: 2, flightId: flight7.id, staffId: pilot4.id },
             { id: 3, flightId: flight7.id, staffId: stewardess1.id },
             { id: 4, flightId: flight7.id, staffId: stewardess5.id },
-            // flight8
             { id: 1, flightId: flight8.id, staffId: pilot5.id },
             { id: 2, flightId: flight8.id, staffId: pilot1.id },
             { id: 3, flightId: flight8.id, staffId: stewardess2.id },
             { id: 4, flightId: flight8.id, staffId: stewardess4.id },
-            // flight9
             { id: 1, flightId: flight9.id, staffId: pilot2.id },
             { id: 2, flightId: flight9.id, staffId: pilot3.id },
             { id: 3, flightId: flight9.id, staffId: stewardess3.id },
             { id: 4, flightId: flight9.id, staffId: stewardess1.id },
-            // flight10
             { id: 1, flightId: flight10.id, staffId: pilot4.id },
             { id: 2, flightId: flight10.id, staffId: pilot5.id },
             { id: 3, flightId: flight10.id, staffId: stewardess2.id },
             { id: 4, flightId: flight10.id, staffId: stewardess3.id },
-            // flight11
             { id: 1, flightId: flight11.id, staffId: pilot1.id },
             { id: 2, flightId: flight11.id, staffId: pilot2.id },
             { id: 3, flightId: flight11.id, staffId: stewardess4.id },
             { id: 4, flightId: flight11.id, staffId: stewardess5.id },
-            // flight12
             { id: 1, flightId: flight12.id, staffId: pilot3.id },
             { id: 2, flightId: flight12.id, staffId: pilot4.id },
             { id: 3, flightId: flight12.id, staffId: stewardess1.id },
             { id: 4, flightId: flight12.id, staffId: stewardess3.id },
-            // flight13
             { id: 1, flightId: flight13.id, staffId: pilot5.id },
             { id: 2, flightId: flight13.id, staffId: pilot1.id },
             { id: 3, flightId: flight13.id, staffId: stewardess2.id },
             { id: 4, flightId: flight13.id, staffId: stewardess5.id },
-            // flight14
             { id: 1, flightId: flight14.id, staffId: pilot2.id },
             { id: 2, flightId: flight14.id, staffId: pilot3.id },
             { id: 3, flightId: flight14.id, staffId: stewardess4.id },
             { id: 4, flightId: flight14.id, staffId: stewardess1.id },
-            // flight15
             { id: 1, flightId: flight15.id, staffId: pilot4.id },
             { id: 2, flightId: flight15.id, staffId: pilot5.id },
             { id: 3, flightId: flight15.id, staffId: stewardess5.id },
             { id: 4, flightId: flight15.id, staffId: stewardess2.id },
-            // flight16
             { id: 1, flightId: flight16.id, staffId: pilot1.id },
             { id: 2, flightId: flight16.id, staffId: pilot2.id },
             { id: 3, flightId: flight16.id, staffId: stewardess3.id },
             { id: 4, flightId: flight16.id, staffId: stewardess4.id },
-            // flight17
             { id: 1, flightId: flight17.id, staffId: pilot3.id },
             { id: 2, flightId: flight17.id, staffId: pilot4.id },
             { id: 3, flightId: flight17.id, staffId: stewardess1.id },
             { id: 4, flightId: flight17.id, staffId: stewardess5.id },
-            // flight18
             { id: 1, flightId: flight18.id, staffId: pilot5.id },
             { id: 2, flightId: flight18.id, staffId: pilot1.id },
             { id: 3, flightId: flight18.id, staffId: stewardess2.id },
             { id: 4, flightId: flight18.id, staffId: stewardess3.id },
-            // flight19
             { id: 1, flightId: flight19.id, staffId: pilot2.id },
             { id: 2, flightId: flight19.id, staffId: pilot3.id },
             { id: 3, flightId: flight19.id, staffId: stewardess4.id },
             { id: 4, flightId: flight19.id, staffId: stewardess1.id },
-            // flight20
             { id: 1, flightId: flight20.id, staffId: pilot4.id },
             { id: 2, flightId: flight20.id, staffId: pilot5.id },
             { id: 3, flightId: flight20.id, staffId: stewardess5.id },
             { id: 4, flightId: flight20.id, staffId: stewardess2.id },
-            // flight21
             { id: 1, flightId: flight21.id, staffId: pilot1.id },
             { id: 2, flightId: flight21.id, staffId: pilot2.id },
             { id: 3, flightId: flight21.id, staffId: stewardess1.id },
             { id: 4, flightId: flight21.id, staffId: stewardess2.id },
-            // flight22
             { id: 1, flightId: flight22.id, staffId: pilot3.id },
             { id: 2, flightId: flight22.id, staffId: pilot4.id },
             { id: 3, flightId: flight22.id, staffId: stewardess3.id },
             { id: 4, flightId: flight22.id, staffId: stewardess4.id },
-            // flight23
             { id: 1, flightId: flight23.id, staffId: pilot5.id },
             { id: 2, flightId: flight23.id, staffId: pilot1.id },
             { id: 3, flightId: flight23.id, staffId: stewardess5.id },
             { id: 4, flightId: flight23.id, staffId: stewardess2.id },
-            // flight24
             { id: 1, flightId: flight24.id, staffId: pilot2.id },
             { id: 2, flightId: flight24.id, staffId: pilot3.id },
             { id: 3, flightId: flight24.id, staffId: stewardess1.id },
             { id: 4, flightId: flight24.id, staffId: stewardess3.id },
-            // flight25
             { id: 1, flightId: flight25.id, staffId: pilot4.id },
             { id: 2, flightId: flight25.id, staffId: pilot5.id },
             { id: 3, flightId: flight25.id, staffId: stewardess4.id },
             { id: 4, flightId: flight25.id, staffId: stewardess5.id },
-            // flight26
             { id: 1, flightId: flight26.id, staffId: pilot1.id },
             { id: 2, flightId: flight26.id, staffId: pilot2.id },
             { id: 3, flightId: flight26.id, staffId: stewardess2.id },
             { id: 4, flightId: flight26.id, staffId: stewardess4.id },
-            // flight27
             { id: 1, flightId: flight27.id, staffId: pilot3.id },
             { id: 2, flightId: flight27.id, staffId: pilot4.id },
             { id: 3, flightId: flight27.id, staffId: stewardess1.id },
             { id: 4, flightId: flight27.id, staffId: stewardess5.id },
-            // flight28
             { id: 1, flightId: flight28.id, staffId: pilot5.id },
             { id: 2, flightId: flight28.id, staffId: pilot1.id },
             { id: 3, flightId: flight28.id, staffId: stewardess2.id },
             { id: 4, flightId: flight28.id, staffId: stewardess3.id },
-            // flight29
             { id: 1, flightId: flight29.id, staffId: pilot2.id },
             { id: 2, flightId: flight29.id, staffId: pilot3.id },
             { id: 3, flightId: flight29.id, staffId: stewardess3.id },
             { id: 4, flightId: flight29.id, staffId: stewardess1.id },
-            // flight30
             { id: 1, flightId: flight30.id, staffId: pilot4.id },
             { id: 2, flightId: flight30.id, staffId: pilot5.id },
             { id: 3, flightId: flight30.id, staffId: stewardess2.id },
             { id: 4, flightId: flight30.id, staffId: stewardess4.id },
-            // flight31
             { id: 1, flightId: flight31.id, staffId: pilot1.id },
             { id: 2, flightId: flight31.id, staffId: pilot2.id },
             { id: 3, flightId: flight31.id, staffId: stewardess1.id },
             { id: 4, flightId: flight31.id, staffId: stewardess5.id },
-            // flight32
             { id: 1, flightId: flight32.id, staffId: pilot3.id },
             { id: 2, flightId: flight32.id, staffId: pilot4.id },
             { id: 3, flightId: flight32.id, staffId: stewardess3.id },
             { id: 4, flightId: flight32.id, staffId: stewardess4.id },
-            // flight33
             { id: 1, flightId: flight33.id, staffId: pilot5.id },
             { id: 2, flightId: flight33.id, staffId: pilot1.id },
             { id: 3, flightId: flight33.id, staffId: stewardess5.id },
             { id: 4, flightId: flight33.id, staffId: stewardess2.id },
-            // flight34
             { id: 1, flightId: flight34.id, staffId: pilot2.id },
             { id: 2, flightId: flight34.id, staffId: pilot3.id },
             { id: 3, flightId: flight34.id, staffId: stewardess1.id },
             { id: 4, flightId: flight34.id, staffId: stewardess3.id },
-            // flight35
             { id: 1, flightId: flight35.id, staffId: pilot4.id },
             { id: 2, flightId: flight35.id, staffId: pilot5.id },
             { id: 3, flightId: flight35.id, staffId: stewardess4.id },
             { id: 4, flightId: flight35.id, staffId: stewardess5.id },
-            // flight36
             { id: 1, flightId: flight36.id, staffId: pilot1.id },
             { id: 2, flightId: flight36.id, staffId: pilot2.id },
             { id: 3, flightId: flight36.id, staffId: stewardess2.id },
             { id: 4, flightId: flight36.id, staffId: stewardess4.id },
-            // flight37
             { id: 1, flightId: flight37.id, staffId: pilot3.id },
             { id: 2, flightId: flight37.id, staffId: pilot4.id },
             { id: 3, flightId: flight37.id, staffId: stewardess1.id },
             { id: 4, flightId: flight37.id, staffId: stewardess5.id },
-            // flight38
             { id: 1, flightId: flight38.id, staffId: pilot5.id },
             { id: 2, flightId: flight38.id, staffId: pilot1.id },
             { id: 3, flightId: flight38.id, staffId: stewardess2.id },
             { id: 4, flightId: flight38.id, staffId: stewardess3.id },
-            // flight39
             { id: 1, flightId: flight39.id, staffId: pilot2.id },
             { id: 2, flightId: flight39.id, staffId: pilot3.id },
             { id: 3, flightId: flight39.id, staffId: stewardess3.id },
             { id: 4, flightId: flight39.id, staffId: stewardess1.id },
-            // flight40
             { id: 1, flightId: flight40.id, staffId: pilot4.id },
             { id: 2, flightId: flight40.id, staffId: pilot5.id },
             { id: 3, flightId: flight40.id, staffId: stewardess2.id },
@@ -661,7 +610,6 @@ async function main() {
         ],
     });
 
-    // Создаем билеты
     await prisma.ticket.create({
         data: {
             flightId: flight1.id,

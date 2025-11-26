@@ -37,7 +37,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Проверяем, не занято ли место
         const existingTicket = await db.ticket.findFirst({
             where: {
                 flightId,

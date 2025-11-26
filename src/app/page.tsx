@@ -11,17 +11,22 @@ export default function Home() {
     const [userRole, setUserRole] = useState('');
 
     useEffect(() => {
-        const user = localStorage.getItem('user');
-        if (user) {
-            const parsedUser = JSON.parse(user);
-            setIsLoggedIn(true);
-            setUserRole(parsedUser.role);
+        if (typeof window !== 'undefined') {
+            try {
+                const user = localStorage.getItem('user');
+                if (user) {
+                    const parsedUser = JSON.parse(user);
+                    setIsLoggedIn(true);
+                    setUserRole(parsedUser.role || '');
+                }
+            } catch (error) {
+                console.error('Ошибка при чтении localStorage:', error);
+            }
         }
     }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
-            {/* Навигация */}
             <nav className="bg-white shadow-sm border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -41,7 +46,9 @@ export default function Home() {
                                     <Button
                                         variant="outline"
                                         onClick={() => {
-                                            localStorage.removeItem('user');
+                                            if (typeof window !== 'undefined') {
+                                                localStorage.removeItem('user');
+                                            }
                                             setIsLoggedIn(false);
                                             setUserRole('');
                                         }}
@@ -64,9 +71,7 @@ export default function Home() {
                 </div>
             </nav>
 
-            {/* Главный экран */}
             <main>
-                {/* Hero секция */}
                 <section className="relative bg-gradient-to-r from-sky-600 to-blue-700 text-white">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
                         <div className="text-center">
@@ -96,7 +101,6 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* Особенности системы */}
                 <section className="py-20 bg-white">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-16">
@@ -202,7 +206,6 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* Статистика */}
                 <section className="py-20 bg-sky-50">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-16">
@@ -232,7 +235,6 @@ export default function Home() {
                 </section>
             </main>
 
-            {/* Футер */}
             <footer className="bg-gray-900 text-white py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

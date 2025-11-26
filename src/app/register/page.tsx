@@ -51,7 +51,6 @@ export default function Register() {
         }
 
         try {
-            // Регистрация пользователя
             const userResponse = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: {
@@ -71,7 +70,6 @@ export default function Register() {
 
             const userData = await userResponse.json();
 
-            // Если регистрируется пассажир, добавляем его в passengers
             if (formData.role === 'passenger') {
                 const passengerResponse = await fetch('/api/passengers', {
                     method: 'POST',
@@ -92,10 +90,8 @@ export default function Register() {
                 }
             }
 
-            // Сохраняем пользователя в localStorage
             localStorage.setItem('user', JSON.stringify(userData.user));
 
-            // Перенаправляем в соответствующий кабинет
             router.push(formData.role === 'admin' ? '/admin' : '/passenger');
         } catch (err: any) {
             setError(err.message);
@@ -252,7 +248,7 @@ export default function Register() {
                                                     id="phone"
                                                     name="phone"
                                                     type="tel"
-                                                    placeholder="+7 (999) 123-45-67"
+                                                    placeholder="+375444546311"
                                                     value={formData.phone}
                                                     onChange={handleChange}
                                                     className="pl-10"

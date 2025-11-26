@@ -62,7 +62,6 @@ export default function Flights() {
     const filterFlights = () => {
         let filtered = flights;
 
-        // Поиск по тексту
         if (searchTerm) {
             filtered = filtered.filter(flight =>
                 flight.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -71,19 +70,16 @@ export default function Flights() {
             );
         }
 
-        // Фильтр по статусу
         if (statusFilter !== 'all') {
             filtered = filtered.filter(flight => flight.status === statusFilter);
         }
 
-        // Фильтр по отправлению
         if (fromFilter) {
             filtered = filtered.filter(flight =>
                 flight.from.toLowerCase().includes(fromFilter.toLowerCase())
             );
         }
 
-        // Фильтр по назначению
         if (toFilter) {
             filtered = filtered.filter(flight =>
                 flight.to.toLowerCase().includes(toFilter.toLowerCase())

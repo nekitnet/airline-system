@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Проверяем, существует ли пассажир с таким паспортом
         const existingPassenger = await db.passenger.findUnique({
             where: { passport }
         });
@@ -24,7 +23,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Создаем пассажира
         const passenger = await db.passenger.create({
             data: {
                 name,

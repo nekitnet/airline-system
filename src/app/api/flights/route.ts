@@ -16,7 +16,6 @@ export async function GET() {
                 crew: { select: { staffId: true } },
             },
             where: {
-                // только будущие/актуальные даты
                 date: { gte: '2025-10-31' }
             },
             orderBy: [{ date: 'asc' }, { time: 'asc' }],
@@ -56,7 +55,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Создаем рейс
         const flight = await db.flight.create({
             data: {
                 from,
@@ -69,7 +67,6 @@ export async function POST(request: NextRequest) {
             }
         });
 
-        // Если указан экипаж, добавляем его
         if (crew && crew.length > 0) {
             await db.crewMember.createMany({
                 data: crew.map((staffId: number, index: number) => ({

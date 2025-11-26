@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Проверяем, существует ли пользователь
         const existingUser = await db.user.findUnique({
             where: { username }
         });
@@ -24,11 +23,10 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Создаем пользователя
         const user = await db.user.create({
             data: {
                 username,
-                password, // В реальном приложении нужно хешировать пароли
+                password,
                 role
             }
         });

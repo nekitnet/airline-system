@@ -34,7 +34,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Проверяем уникальность email, если указан
         if (email) {
             const existingStaff = await db.staff.findUnique({
                 where: { email }
