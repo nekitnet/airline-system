@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plane, User, Lock, Mail, Phone, CreditCard } from 'lucide-react';
 
 export default function Register() {
@@ -32,12 +31,6 @@ export default function Register() {
         });
     };
 
-    const handleRoleChange = (value: string) => {
-        setFormData({
-            ...formData,
-            role: value
-        });
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -103,10 +96,9 @@ export default function Register() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white flex items-center justify-center p-4">
             <div className="w-full max-w-2xl">
-                {/* Header */}
                 <div className="text-center mb-8">
-                    <div className="flex items-center justify-center mb-4">
-                        <Plane className="h-12 w-12 text-sky-600 mr-3" />
+                    <div className="flex items-center justify-center mb-4" suppressHydrationWarning>
+                        <Plane className="h-12 w-12 text-sky-600 mr-3" suppressHydrationWarning />
                         <h1 className="text-3xl font-bold text-gray-900">Система Авиакомпания</h1>
                     </div>
                     <p className="text-gray-600">Создайте новый аккаунт</p>
@@ -127,39 +119,23 @@ export default function Register() {
                                 </div>
                             )}
 
-                            {/* Основная информация */}
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold">Основная информация</h3>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="username">Логин</Label>
-                                        <div className="relative">
-                                            <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                            <Input
-                                                id="username"
-                                                name="username"
-                                                type="text"
-                                                placeholder="Введите логин"
-                                                value={formData.username}
-                                                onChange={handleChange}
-                                                className="pl-10"
-                                                required
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="role">Роль</Label>
-                                        <Select value={formData.role} onValueChange={handleRoleChange}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Выберите роль" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="passenger">Пассажир</SelectItem>
-                                                <SelectItem value="admin">Администратор</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                <div className="space-y-2">
+                                    <Label htmlFor="username">Логин</Label>
+                                    <div className="relative">
+                                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" suppressHydrationWarning />
+                                        <Input
+                                            id="username"
+                                            name="username"
+                                            type="text"
+                                            placeholder="Введите логин"
+                                            value={formData.username}
+                                            onChange={handleChange}
+                                            className="pl-10"
+                                            required
+                                        />
                                     </div>
                                 </div>
 
@@ -167,7 +143,7 @@ export default function Register() {
                                     <div className="space-y-2">
                                         <Label htmlFor="password">Пароль</Label>
                                         <div className="relative">
-                                            <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                            <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" suppressHydrationWarning />
                                             <Input
                                                 id="password"
                                                 name="password"
@@ -184,7 +160,7 @@ export default function Register() {
                                     <div className="space-y-2">
                                         <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
                                         <div className="relative">
-                                            <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                            <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" suppressHydrationWarning />
                                             <Input
                                                 id="confirmPassword"
                                                 name="confirmPassword"
@@ -200,7 +176,6 @@ export default function Register() {
                                 </div>
                             </div>
 
-                            {/* Информация для пассажира */}
                             {formData.role === 'passenger' && (
                                 <div className="space-y-4">
                                     <h3 className="text-lg font-semibold">Личная информация</h3>
@@ -208,7 +183,7 @@ export default function Register() {
                                     <div className="space-y-2">
                                         <Label htmlFor="name">Полное имя</Label>
                                         <div className="relative">
-                                            <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                            <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" suppressHydrationWarning />
                                             <Input
                                                 id="name"
                                                 name="name"
@@ -226,7 +201,7 @@ export default function Register() {
                                         <div className="space-y-2">
                                             <Label htmlFor="email">Email</Label>
                                             <div className="relative">
-                                                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" suppressHydrationWarning />
                                                 <Input
                                                     id="email"
                                                     name="email"
@@ -243,7 +218,7 @@ export default function Register() {
                                         <div className="space-y-2">
                                             <Label htmlFor="phone">Телефон</Label>
                                             <div className="relative">
-                                                <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                                <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" suppressHydrationWarning />
                                                 <Input
                                                     id="phone"
                                                     name="phone"
@@ -261,7 +236,7 @@ export default function Register() {
                                     <div className="space-y-2">
                                         <Label htmlFor="passport">Номер паспорта</Label>
                                         <div className="relative">
-                                            <CreditCard className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                            <CreditCard className="absolute left-3 top-3 h-4 w-4 text-gray-400" suppressHydrationWarning />
                                             <Input
                                                 id="passport"
                                                 name="passport"

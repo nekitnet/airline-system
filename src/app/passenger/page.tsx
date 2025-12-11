@@ -203,7 +203,6 @@ export default function PassengerDashboard() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
-            {/* Навигация */}
             <nav className="bg-white shadow-sm border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -227,7 +226,6 @@ export default function PassengerDashboard() {
             </nav>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Заголовок */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Личный кабинет пассажира</h1>
                     <p className="text-gray-600">Управление вашими билетами и личными данными</p>
@@ -239,10 +237,8 @@ export default function PassengerDashboard() {
                         <TabsTrigger value="tickets">Мои билеты</TabsTrigger>
                     </TabsList>
 
-                    {/* Профиль */}
                     <TabsContent value="profile">
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            {/* Основная информация */}
                             <Card className="lg:col-span-2">
                                 <CardHeader>
                                     <CardTitle className="flex items-center">
@@ -287,7 +283,6 @@ export default function PassengerDashboard() {
                                 </CardContent>
                             </Card>
 
-                            {/* Статистика */}
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Статистика</CardTitle>
@@ -316,7 +311,6 @@ export default function PassengerDashboard() {
                         </div>
                     </TabsContent>
 
-                    {/* Билеты */}
                     <TabsContent value="tickets">
                         <div className="space-y-6">
                             <div className="flex justify-between items-center">
@@ -405,28 +399,48 @@ export default function PassengerDashboard() {
                     </TabsContent>
                 </Tabs>
 
-                {/* Диалог редактирования профиля */}
                 <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                    <DialogContent>
+                    <DialogContent className="max-w-md">
                         <DialogHeader>
-                            <DialogTitle>Редактировать профиль</DialogTitle>
+                            <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">Редактировать профиль</DialogTitle>
                         </DialogHeader>
                         <div className="grid gap-4 py-2">
                             <div className="grid gap-2">
-                                <Label htmlFor="name">ФИО</Label>
-                                <Input id="name" value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} />
+                                <Label htmlFor="name" className="text-sm font-medium text-gray-700 dark:text-gray-300">ФИО</Label>
+                                <Input 
+                                    id="name" 
+                                    value={editForm.name} 
+                                    onChange={e => setEditForm({ ...editForm, name: e.target.value })} 
+                                    className="text-gray-900 dark:text-gray-100"
+                                />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="passport">Паспорт</Label>
-                                <Input id="passport" value={editForm.passport} onChange={e => setEditForm({ ...editForm, passport: e.target.value })} />
+                                <Label htmlFor="passport" className="text-sm font-medium text-gray-700 dark:text-gray-300">Паспорт</Label>
+                                <Input 
+                                    id="passport" 
+                                    value={editForm.passport} 
+                                    onChange={e => setEditForm({ ...editForm, passport: e.target.value })} 
+                                    className="text-gray-900 dark:text-gray-100"
+                                />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input id="email" type="email" value={editForm.email} onChange={e => setEditForm({ ...editForm, email: e.target.value })} />
+                                <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</Label>
+                                <Input 
+                                    id="email" 
+                                    type="email" 
+                                    value={editForm.email} 
+                                    onChange={e => setEditForm({ ...editForm, email: e.target.value })} 
+                                    className="text-gray-900 dark:text-gray-100"
+                                />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="phone">Телефон</Label>
-                                <Input id="phone" value={editForm.phone} onChange={e => setEditForm({ ...editForm, phone: e.target.value })} />
+                                <Label htmlFor="phone" className="text-sm font-medium text-gray-700 dark:text-gray-300">Телефон</Label>
+                                <Input 
+                                    id="phone" 
+                                    value={editForm.phone} 
+                                    onChange={e => setEditForm({ ...editForm, phone: e.target.value })} 
+                                    className="text-gray-900 dark:text-gray-100"
+                                />
                             </div>
                         </div>
                         <DialogFooter>
@@ -436,23 +450,43 @@ export default function PassengerDashboard() {
                     </DialogContent>
                 </Dialog>
 
-                {/* Диалог подробностей билета */}
                 <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-                    <DialogContent>
+                    <DialogContent className="max-w-md">
                         <DialogHeader>
-                            <DialogTitle>Билет #{selectedTicket?.id}</DialogTitle>
+                            <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">Билет #{selectedTicket?.id}</DialogTitle>
                         </DialogHeader>
                         {selectedTicket && (
-                            <div className="space-y-3">
-                                <div className="text-sm text-gray-700">Маршрут: {selectedTicket.flight.from} → {selectedTicket.flight.to}</div>
-                                <div className="text-sm text-gray-700">Вылет: {formatDateTime(selectedTicket.flight.date, selectedTicket.flight.time)}</div>
-                                <div className="text-sm text-gray-700">Самолёт: {selectedTicket.flight.plane}</div>
-                                <div className="text-sm text-gray-700">Место: {selectedTicket.seat}</div>
-                                <div className="text-sm text-gray-700">Статус: {selectedTicket.status}</div>
-                                <div className="text-sm font-semibold text-sky-700">Цена: {selectedTicket.price.toLocaleString('ru-RU')} ₽</div>
-                                <div className="flex gap-2 pt-2">
-                                    <Button variant="outline" onClick={copyBookingCode}>Скопировать код брони</Button>
-                                    <Button onClick={() => { setDetailsOpen(false); router.push(`/flights/${selectedTicket.flight.id}`); }}>Открыть детали рейса</Button>
+                            <div className="space-y-4 py-2">
+                                <div className="space-y-2">
+                                    <div className="text-sm">
+                                        <span className="font-medium text-gray-600 dark:text-gray-400">Маршрут:</span>
+                                        <span className="ml-2 text-gray-900 dark:text-gray-100">{selectedTicket.flight.from} → {selectedTicket.flight.to}</span>
+                                    </div>
+                                    <div className="text-sm">
+                                        <span className="font-medium text-gray-600 dark:text-gray-400">Вылет:</span>
+                                        <span className="ml-2 text-gray-900 dark:text-gray-100">{formatDateTime(selectedTicket.flight.date, selectedTicket.flight.time)}</span>
+                                    </div>
+                                    <div className="text-sm">
+                                        <span className="font-medium text-gray-600 dark:text-gray-400">Самолёт:</span>
+                                        <span className="ml-2 text-gray-900 dark:text-gray-100">{selectedTicket.flight.plane}</span>
+                                    </div>
+                                    <div className="text-sm">
+                                        <span className="font-medium text-gray-600 dark:text-gray-400">Место:</span>
+                                        <span className="ml-2 text-gray-900 dark:text-gray-100">{selectedTicket.seat}</span>
+                                    </div>
+                                    <div className="text-sm">
+                                        <span className="font-medium text-gray-600 dark:text-gray-400">Статус:</span>
+                                        <span className="ml-2 text-gray-900 dark:text-gray-100">{selectedTicket.status}</span>
+                                    </div>
+                                    <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                                        <div className="text-lg font-semibold text-sky-600 dark:text-sky-400">
+                                            Цена: {selectedTicket.price.toLocaleString('ru-RU')} ₽
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                                    <Button variant="outline" onClick={copyBookingCode} className="flex-1">Скопировать код брони</Button>
+                                    <Button onClick={() => { setDetailsOpen(false); router.push(`/flights/${selectedTicket.flight.id}`); }} className="flex-1">Открыть детали рейса</Button>
                                 </div>
                             </div>
                         )}

@@ -181,7 +181,6 @@ export default function AdminDashboard() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
-            {/* Навигация */}
             <nav className="bg-white shadow-sm border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -206,13 +205,11 @@ export default function AdminDashboard() {
             </nav>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Заголовок */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Панель администратора</h1>
                     <p className="text-gray-600">Управление рейсами, персоналом и билетами</p>
                 </div>
 
-                {/* Статистика */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <Card>
                         <CardContent className="p-6 text-center">
@@ -252,10 +249,9 @@ export default function AdminDashboard() {
                         <TabsTrigger value="tickets">Билеты</TabsTrigger>
                     </TabsList>
 
-                    {/* Рейсы */}
-                    <TabsContent value="flights">
+                    <TabsContent value="flights" className="pt-6">
                         <div className="space-y-6">
-                            <div className="flex justify-between items-center">
+                            <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-semibold">Управление рейсами</h2>
                                 <Button onClick={() => { setFlightForm({ from: '', to: '', date: '', time: '', plane: '', price: '' }); setNewFlightPilotIds([]); setNewFlightStewardessIds([]); setAddFlightOpen(true); }}>
                                     <Plus className="h-4 w-4 mr-2" />
@@ -313,10 +309,9 @@ export default function AdminDashboard() {
                         </div>
                     </TabsContent>
 
-                    {/* Сотрудники */}
-                    <TabsContent value="staff">
+                    <TabsContent value="staff" className="pt-6">
                         <div className="space-y-6">
-                            <div className="flex justify-between items-center">
+                            <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-semibold">Управление персоналом</h2>
                                 <Button onClick={() => router.push('/admin/staff')}>
                                     <Plus className="h-4 w-4 mr-2" />
@@ -368,10 +363,9 @@ export default function AdminDashboard() {
                         </div>
                     </TabsContent>
 
-                    {/* Билеты */}
-                    <TabsContent value="tickets">
+                    <TabsContent value="tickets" className="pt-6">
                         <div className="space-y-6">
-                            <div className="flex justify-between items-center">
+                            <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-semibold">Управление билетами</h2>
                             </div>
 
@@ -433,13 +427,12 @@ export default function AdminDashboard() {
                     </TabsContent>
                 </Tabs>
 
-                {/* Диалог: Добавить рейс */}
                 <Dialog open={addFlightOpen} onOpenChange={setAddFlightOpen}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Добавить рейс</DialogTitle>
+                    <DialogContent className="max-h-[90vh] overflow-y-auto">
+                        <DialogHeader className="pb-6">
+                            <DialogTitle className="text-xl">Добавить рейс</DialogTitle>
                         </DialogHeader>
-                        <div className="grid gap-3">
+                        <div className="grid gap-4 pt-2">
                             <div>
                                 <Label>Откуда</Label>
                                 <Input value={flightForm.from} onChange={e => setFlightForm({ ...flightForm, from: e.target.value })} />
@@ -464,13 +457,21 @@ export default function AdminDashboard() {
                             </div>
                             <div>
                                 <Label>Цена</Label>
-                                <Input type="number" value={flightForm.price} onChange={e => setFlightForm({ ...flightForm, price: e.target.value })} />
+                                <Input 
+                                    type="text" 
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    value={flightForm.price} 
+                                    onChange={e => {
+                                        const value = e.target.value.replace(/[^0-9]/g, '');
+                                        setFlightForm({ ...flightForm, price: value });
+                                    }} 
+                                />
                             </div>
 
-                            {/* Экипаж для нового рейса */}
-                            <div className="grid gap-2">
-                                <Label>Пилоты (минимум 2)</Label>
-                                <div className="max-h-40 overflow-auto p-2 border rounded-md space-y-2">
+                            <div className="grid gap-2 pt-2">
+                                <Label className="text-base font-medium">Пилоты (минимум 2)</Label>
+                                <div className="max-h-40 overflow-auto p-3 border rounded-md space-y-2">
                                     {staff.filter(s => s.role === 'Пилот').map(p => (
                                         <label key={p.id} className="flex items-center gap-2 text-sm">
                                             <input
@@ -489,9 +490,9 @@ export default function AdminDashboard() {
                                 <div className="text-xs text-gray-500">Выбрано: {newFlightPilotIds.length}</div>
                             </div>
 
-                            <div className="grid gap-2">
-                                <Label>Стюардессы (минимум 2)</Label>
-                                <div className="max-h-40 overflow-auto p-2 border rounded-md space-y-2">
+                            <div className="grid gap-2 pt-2">
+                                <Label className="text-base font-medium">Стюардессы (минимум 2)</Label>
+                                <div className="max-h-40 overflow-auto p-3 border rounded-md space-y-2">
                                     {staff.filter(s => s.role === 'Стюардесса').map(st => (
                                         <label key={st.id} className="flex items-center gap-2 text-sm">
                                             <input
@@ -525,7 +526,6 @@ export default function AdminDashboard() {
                     </DialogContent>
                 </Dialog>
 
-                {/* Диалог: Изменить рейс */}
                 <Dialog open={editFlightOpen} onOpenChange={setEditFlightOpen}>
                     <DialogContent>
                         <DialogHeader>
@@ -556,7 +556,16 @@ export default function AdminDashboard() {
                             </div>
                             <div>
                                 <Label>Цена</Label>
-                                <Input type="number" value={flightForm.price} onChange={e => setFlightForm({ ...flightForm, price: e.target.value })} />
+                                <Input 
+                                    type="text" 
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    value={flightForm.price} 
+                                    onChange={e => {
+                                        const value = e.target.value.replace(/[^0-9]/g, '');
+                                        setFlightForm({ ...flightForm, price: value });
+                                    }} 
+                                />
                             </div>
                         </div>
                         <DialogFooter>
@@ -570,7 +579,6 @@ export default function AdminDashboard() {
                     </DialogContent>
                 </Dialog>
 
-                {/* Диалог: Изменить статус рейса */}
                 <Dialog open={statusOpen} onOpenChange={setStatusOpen}>
                     <DialogContent>
                         <DialogHeader>
@@ -579,10 +587,14 @@ export default function AdminDashboard() {
                         <div className="grid gap-3">
                             <Label>Статус</Label>
                             <Select value={statusValue} onValueChange={setStatusValue}>
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Выберите статус" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent 
+                                    className="!z-[102]"
+                                    position="popper"
+                                    sideOffset={4}
+                                >
                                     <SelectItem value="В ожидании">В ожидании</SelectItem>
                                     <SelectItem value="В пути">В пути</SelectItem>
                                     <SelectItem value="Задержан">Задержан</SelectItem>
@@ -601,7 +613,6 @@ export default function AdminDashboard() {
                     </DialogContent>
                 </Dialog>
 
-                {/* Диалог: Назначить сотрудника на рейс */}
                 <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
                     <DialogContent>
                         <DialogHeader>
@@ -610,10 +621,14 @@ export default function AdminDashboard() {
                         <div className="grid gap-3">
                             <Label>Выберите рейс</Label>
                             <Select value={selectedFlight ? String(selectedFlight.id) : ''} onValueChange={(v) => setSelectedFlight(flights.find(f => String(f.id) === v) || null)}>
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Выберите рейс" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent 
+                                    className="!z-[102]"
+                                    position="popper"
+                                    sideOffset={4}
+                                >
                                     {flights.map(f => (
                                         <SelectItem key={f.id} value={String(f.id)}>
                                             #{f.id} {f.from} → {f.to}
@@ -625,7 +640,7 @@ export default function AdminDashboard() {
                             <div className="max-h-48 overflow-auto space-y-2 p-2 border rounded-md">
                                 {staff.map(s => (
                                     <label key={s.id} className="flex items-center gap-2 text-sm">
-                                        <input type="checkbox" checked={assignStaffIds.includes(s.id) || (!!selectedFlight && selectedFlight.crew.includes(s.id)) || (selectedStaff && selectedStaff.id === s.id)} onChange={(e) => {
+                                        <input type="checkbox" checked={assignStaffIds.includes(s.id) || (!!selectedFlight && selectedFlight.crew.includes(s.id)) || (selectedStaff?.id === s.id) || false} onChange={(e) => {
                                             const checked = e.target.checked;
                                             const base = new Set(assignStaffIds);
                                             if (checked) { base.add(s.id); } else { base.delete(s.id); }
@@ -648,7 +663,6 @@ export default function AdminDashboard() {
                     </DialogContent>
                 </Dialog>
 
-                {/* Диалог: Изменить сотрудника */}
                 <Dialog open={editStaffOpen} onOpenChange={setEditStaffOpen}>
                     <DialogContent>
                         <DialogHeader>
@@ -662,10 +676,14 @@ export default function AdminDashboard() {
                             <div>
                                 <Label>Должность</Label>
                                 <Select value={staffForm.role} onValueChange={(v) => setStaffForm({ ...staffForm, role: v })}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Выберите должность" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent 
+                                        className="!z-[102]"
+                                        position="popper"
+                                        sideOffset={4}
+                                    >
                                         <SelectItem value="Пилот">Пилот</SelectItem>
                                         <SelectItem value="Стюардесса">Стюардесса</SelectItem>
                                         <SelectItem value="Инженер">Инженер</SelectItem>
@@ -692,7 +710,6 @@ export default function AdminDashboard() {
                     </DialogContent>
                 </Dialog>
 
-                {/* Диалог: Изменить билет */}
                 <Dialog open={ticketEditOpen} onOpenChange={setTicketEditOpen}>
                     <DialogContent>
                         <DialogHeader>
@@ -701,10 +718,14 @@ export default function AdminDashboard() {
                         <div className="grid gap-3">
                             <Label>Статус</Label>
                             <Select value={ticketStatus} onValueChange={setTicketStatus}>
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Выберите статус" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent 
+                                    className="!z-[102]"
+                                    position="popper"
+                                    sideOffset={4}
+                                >
                                     <SelectItem value="Забронирован">Забронирован</SelectItem>
                                     <SelectItem value="Оплачен">Оплачен</SelectItem>
                                     <SelectItem value="Отменён">Отменён</SelectItem>

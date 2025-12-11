@@ -6,15 +6,6 @@ const nextConfig: NextConfig = {
     },
 
     reactStrictMode: false,
-    webpack: (config, { dev }) => {
-        if (dev) {
-
-            config.watchOptions = {
-                ignored: ['**/*'],
-            };
-        }
-        return config;
-    },
     eslint: {
 
         ignoreDuringBuilds: true,

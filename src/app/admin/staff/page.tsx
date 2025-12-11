@@ -185,7 +185,6 @@ export default function StaffManagement() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
-            {/* Навигация */}
             <nav className="bg-white shadow-sm border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -206,13 +205,11 @@ export default function StaffManagement() {
             </nav>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Заголовок */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Управление сотрудниками</h1>
                     <p className="text-gray-600">Добавление, редактирование и управление персоналом авиакомпании</p>
                 </div>
 
-                {/* Статистика */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <Card>
                         <CardContent className="p-6 text-center">
@@ -249,7 +246,6 @@ export default function StaffManagement() {
                     </Card>
                 </div>
 
-                {/* Фильтры и поиск */}
                 <Card className="mb-8">
                     <CardHeader>
                         <CardTitle className="flex items-center">
@@ -289,7 +285,13 @@ export default function StaffManagement() {
                             </div>
 
                             <div className="flex items-end">
-                                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                                <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
+                                    setIsAddDialogOpen(open);
+                                    if (open) {
+                                        // Сбрасываем форму при открытии диалога
+                                        setFormData({ name: '', role: 'Пилот', email: '', phone: '' });
+                                    }
+                                }}>
                                     <DialogTrigger asChild>
                                         <Button className="w-full">
                                             <Plus className="h-4 w-4 mr-2" />
@@ -317,11 +319,24 @@ export default function StaffManagement() {
 
                                             <div className="space-y-2">
                                                 <Label htmlFor="role">Должность</Label>
-                                                <Select value={formData.role} onValueChange={(value) => setFormData({...formData, role: value})}>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
+                                                <Select 
+                                                    key={`role-select-${isAddDialogOpen}`}
+                                                    value={formData.role} 
+                                                    onValueChange={(value) => {
+                                                        setFormData({...formData, role: value});
+                                                    }}
+                                                >
+                                                    <SelectTrigger className="w-full" id="role-select-trigger">
+                                                        <SelectValue placeholder="Выберите должность" />
                                                     </SelectTrigger>
-                                                    <SelectContent>
+                                                    <SelectContent 
+                                                        className="!z-[102]"
+                                                        position="popper"
+                                                        sideOffset={4}
+                                                        onCloseAutoFocus={(e) => {
+                                                            e.preventDefault();
+                                                        }}
+                                                    >
                                                         <SelectItem value="Пилот">Пилот</SelectItem>
                                                         <SelectItem value="Стюардесса">Стюардесса</SelectItem>
                                                         <SelectItem value="Инженер">Инженер</SelectItem>
@@ -346,7 +361,7 @@ export default function StaffManagement() {
                                                     id="phone"
                                                     value={formData.phone}
                                                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                                    placeholder="+7 (999) 123-45-67"
+                                                    placeholder="+375 (29) 123-45-67"
                                                 />
                                             </div>
 
@@ -370,7 +385,6 @@ export default function StaffManagement() {
                     </CardContent>
                 </Card>
 
-                {/* Список сотрудников */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredStaff.length === 0 ? (
                         <div className="col-span-full text-center py-12">
@@ -442,7 +456,6 @@ export default function StaffManagement() {
                     )}
                 </div>
             </main>
-            {/* Диалог: Изменить сотрудника */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent>
                     <DialogHeader>

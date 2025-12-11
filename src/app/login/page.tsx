@@ -59,10 +59,9 @@ export default function Login() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white flex items-center justify-center p-4">
             <div className="w-full max-w-md">
-                {/* Header */}
                 <div className="text-center mb-8">
-                    <div className="flex items-center justify-center mb-4">
-                        <Plane className="h-12 w-12 text-sky-600 mr-3" />
+                    <div className="flex items-center justify-center mb-4" suppressHydrationWarning>
+                        <Plane className="h-12 w-12 text-sky-600 mr-3" suppressHydrationWarning />
                         <h1 className="text-3xl font-bold text-gray-900">Система Авиакомпания</h1>
                     </div>
                     <p className="text-gray-600">Войдите в свой аккаунт</p>
@@ -86,7 +85,7 @@ export default function Login() {
                             <div className="space-y-2">
                                 <Label htmlFor="username">Логин</Label>
                                 <div className="relative">
-                                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" suppressHydrationWarning />
                                     <Input
                                         id="username"
                                         name="username"
@@ -103,7 +102,7 @@ export default function Login() {
                             <div className="space-y-2">
                                 <Label htmlFor="password">Пароль</Label>
                                 <div className="relative">
-                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" suppressHydrationWarning />
                                     <Input
                                         id="password"
                                         name="password"
@@ -133,15 +132,6 @@ export default function Login() {
                                     Зарегистрируйтесь
                                 </Link>
                             </p>
-                        </div>
-
-                        {/* Демо-аккаунты */}
-                        <div className="mt-6 p-4 bg-sky-50 rounded-lg">
-                            <p className="text-sm font-medium text-sky-900 mb-2">Демо-аккаунты:</p>
-                            <div className="text-xs text-sky-700 space-y-1">
-                                <p><strong>Пассажир:</strong> ivanov / 1234</p>
-                                <p><strong>Администратор:</strong> admin / admin123</p>
-                            </div>
                         </div>
                     </CardContent>
                 </Card>

@@ -166,7 +166,6 @@ export default function Flights() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
-            {/* Навигация */}
             <nav className="bg-white shadow-sm border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -189,13 +188,11 @@ export default function Flights() {
             </nav>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Заголовок */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Список рейсов</h1>
                     <p className="text-gray-600">Просмотр и поиск доступных авиарейсов</p>
                 </div>
 
-                {/* Фильтры */}
                 <Card className="mb-8">
                     <CardHeader>
                         <CardTitle className="flex items-center">
@@ -273,7 +270,6 @@ export default function Flights() {
                     </CardContent>
                 </Card>
 
-                {/* Список рейсов */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {filteredFlights.length === 0 ? (
                         <div className="col-span-full text-center py-12">
@@ -319,7 +315,7 @@ export default function Flights() {
 
                                         {flight.price && (
                                             <div className="text-lg font-semibold text-sky-600">
-                                                от {flight.price.toLocaleString('ru-RU')} ₽
+                                                от {flight.price.toLocaleString('ru-RU')} BYN
                                             </div>
                                         )}
 
@@ -340,7 +336,6 @@ export default function Flights() {
                     )}
                 </div>
 
-                {/* Статистика */}
                 <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
                     <Card>
                         <CardContent className="p-6 text-center">

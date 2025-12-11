@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plane, Users, Ticket, Shield, Clock, MapPin } from 'lucide-react';
@@ -9,8 +10,10 @@ import { Plane, Users, Ticket, Shield, Clock, MapPin } from 'lucide-react';
 export default function Home() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userRole, setUserRole] = useState('');
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
+        setIsClient(true);
         if (typeof window !== 'undefined') {
             try {
                 const user = localStorage.getItem('user');
@@ -30,15 +33,15 @@ export default function Home() {
             <nav className="bg-white shadow-sm border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
-                        <div className="flex items-center">
-                            <Plane className="h-8 w-8 text-sky-600 mr-3" />
+                        <div className="flex items-center" suppressHydrationWarning>
+                            <Plane className="h-8 w-8 text-sky-600 mr-3" suppressHydrationWarning />
                             <span className="text-xl font-bold text-gray-900">Система Авиакомпания</span>
                         </div>
                         <div className="flex items-center space-x-4">
                             <Link href="/flights">
                                 <Button variant="ghost">Рейсы</Button>
                             </Link>
-                            {isLoggedIn ? (
+                            {isClient && isLoggedIn ? (
                                 <>
                                     <Link href={userRole === 'admin' ? '/admin' : '/passenger'}>
                                         <Button>Личный кабинет</Button>
@@ -72,26 +75,37 @@ export default function Home() {
             </nav>
 
             <main>
-                <section className="relative bg-gradient-to-r from-sky-600 to-blue-700 text-white">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+                <section className="relative text-white overflow-hidden min-h-[600px]">
+                    <div className="absolute inset-0 z-0">
+                        <Image
+                            src="/airplane_hero.jpg"
+                            alt="Авиалайнер"
+                            fill
+                            className="object-cover"
+                            priority
+                            quality={90}
+                        />
+                    </div>
+                    
+                    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
                         <div className="text-center">
-                            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+                            <h1 className="text-4xl md:text-6xl font-bold mb-6 drop-shadow-2xl text-white">
                                 Добро пожаловать в Систему Авиакомпания
                             </h1>
-                            <p className="text-xl md:text-2xl mb-8 text-sky-100">
+                            <p className="text-xl md:text-2xl mb-8 text-white drop-shadow-xl">
                                 Современная система управления полетами и бронирования билетов
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Link href="/flights">
-                                    <Button size="lg" variant="secondary" className="bg-white text-sky-600 hover:bg-gray-100">
-                                        <Ticket className="mr-2 h-5 w-5" />
+                                    <Button size="lg" variant="secondary" className="bg-white text-sky-600 hover:bg-gray-100 shadow-lg">
+                                        <Ticket className="mr-2 h-5 w-5" suppressHydrationWarning />
                                         Посмотреть рейсы
                                     </Button>
                                 </Link>
-                                {!isLoggedIn && (
+                                {isClient && !isLoggedIn && (
                                     <Link href="/register">
-                                        <Button size="lg" variant="secondary" className="bg-sky-500 text-white hover:bg-sky-600 border-2 border-white">
-                                            <Users className="mr-2 h-5 w-5" />
+                                        <Button size="lg" variant="secondary" className="bg-sky-500 text-white hover:bg-sky-600 border-2 border-white shadow-lg">
+                                            <Users className="mr-2 h-5 w-5" suppressHydrationWarning />
                                             Зарегистрироваться
                                         </Button>
                                     </Link>
@@ -115,7 +129,7 @@ export default function Home() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             <Card className="hover:shadow-lg transition-shadow">
                                 <CardHeader>
-                                    <Plane className="h-12 w-12 text-sky-600 mb-4" />
+                                    <Plane className="h-12 w-12 text-sky-600 mb-4" suppressHydrationWarning />
                                     <CardTitle>Управление рейсами</CardTitle>
                                     <CardDescription>
                                         Полный контроль над расписанием полетов, статусами и назначением экипажей
@@ -130,7 +144,7 @@ export default function Home() {
 
                             <Card className="hover:shadow-lg transition-shadow">
                                 <CardHeader>
-                                    <Ticket className="h-12 w-12 text-sky-600 mb-4" />
+                                    <Ticket className="h-12 w-12 text-sky-600 mb-4" suppressHydrationWarning />
                                     <CardTitle>Бронирование билетов</CardTitle>
                                     <CardDescription>
                                         Удобная система покупки и управления авиабилетами онлайн
@@ -145,7 +159,7 @@ export default function Home() {
 
                             <Card className="hover:shadow-lg transition-shadow">
                                 <CardHeader>
-                                    <Users className="h-12 w-12 text-sky-600 mb-4" />
+                                    <Users className="h-12 w-12 text-sky-600 mb-4" suppressHydrationWarning />
                                     <CardTitle>Управление персоналом</CardTitle>
                                     <CardDescription>
                                         Полный учет сотрудников авиакомпании и их назначение на рейсы
@@ -160,7 +174,7 @@ export default function Home() {
 
                             <Card className="hover:shadow-lg transition-shadow">
                                 <CardHeader>
-                                    <Shield className="h-12 w-12 text-sky-600 mb-4" />
+                                    <Shield className="h-12 w-12 text-sky-600 mb-4" suppressHydrationWarning />
                                     <CardTitle>Безопасность</CardTitle>
                                     <CardDescription>
                                         Надежная система аутентификации и разграничения прав доступа
@@ -175,7 +189,7 @@ export default function Home() {
 
                             <Card className="hover:shadow-lg transition-shadow">
                                 <CardHeader>
-                                    <Clock className="h-12 w-12 text-sky-600 mb-4" />
+                                    <Clock className="h-12 w-12 text-sky-600 mb-4" suppressHydrationWarning />
                                     <CardTitle>Отслеживание статусов</CardTitle>
                                     <CardDescription>
                                         Мониторинг статусов рейсов в реальном времени
@@ -190,7 +204,7 @@ export default function Home() {
 
                             <Card className="hover:shadow-lg transition-shadow">
                                 <CardHeader>
-                                    <MapPin className="h-12 w-12 text-sky-600 mb-4" />
+                                    <MapPin className="h-12 w-12 text-sky-600 mb-4" suppressHydrationWarning />
                                     <CardTitle>Маршруты</CardTitle>
                                     <CardDescription>
                                         Управление маршрутами и направлениями полетов
@@ -240,7 +254,7 @@ export default function Home() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div>
                             <div className="flex items-center mb-4">
-                                <Plane className="h-8 w-8 text-sky-400 mr-3" />
+                                <Plane className="h-8 w-8 text-sky-400 mr-3" suppressHydrationWarning />
                                 <span className="text-xl font-bold">Система Авиакомпания</span>
                             </div>
                             <p className="text-gray-400">
@@ -259,7 +273,7 @@ export default function Home() {
                             <h3 className="text-lg font-semibold mb-4">Поддержка</h3>
                             <p className="text-gray-400">
                                 Круглосуточная поддержка клиентов<br />
-                                Телефон: +7 (800) 123-45-67<br />
+                                Телефон: +375 (29) 123-45-67<br />
                                 Email: support@airline.ru
                             </p>
                         </div>

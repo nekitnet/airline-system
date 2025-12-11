@@ -30,7 +30,7 @@ async function main() {
             name: 'Иванов Иван Иванович',
             passport: '1234 567890',
             email: 'ivanov@example.com',
-            phone: '+7 (999) 123-45-67',
+            phone: '+375 (29) 123-45-67',
             userId: passengerUser.id,
         },
     });
@@ -40,7 +40,7 @@ async function main() {
             name: 'Петров Петр Петрович',
             role: 'Пилот',
             email: 'pilot1@airline.ru',
-            phone: '+7 (999) 111-22-33',
+            phone: '+375 (29) 111-22-33',
         },
     });
 
@@ -49,7 +49,7 @@ async function main() {
             name: 'Сидорова Анна Викторовна',
             role: 'Стюардесса',
             email: 'stewardess1@airline.ru',
-            phone: '+7 (999) 222-33-44',
+            phone: '+375 (29) 222-33-44',
         },
     });
 
@@ -58,7 +58,7 @@ async function main() {
             name: 'Кузнецов Михаил Сергеевич',
             role: 'Инженер',
             email: 'engineer1@airline.ru',
-            phone: '+7 (999) 333-44-55',
+            phone: '+375 (29) 333-44-55',
         },
     });
 
@@ -67,7 +67,7 @@ async function main() {
             name: 'Иванов Сергей Николаевич',
             role: 'Пилот',
             email: 'pilot2@airline.ru',
-            phone: '+7 (999) 444-55-66',
+            phone: '+375 (29) 444-55-66',
         },
     });
 
@@ -76,7 +76,7 @@ async function main() {
             name: 'Алексеев Дмитрий Андреевич',
             role: 'Пилот',
             email: 'pilot3@airline.ru',
-            phone: '+7 (999) 555-66-77',
+            phone: '+375 (29) 555-66-77',
         },
     });
 
@@ -85,7 +85,7 @@ async function main() {
             name: 'Никитин Павел Константинович',
             role: 'Пилот',
             email: 'pilot4@airline.ru',
-            phone: '+7 (999) 666-77-88',
+            phone: '+375 (29) 666-77-88',
         },
     });
 
@@ -94,7 +94,7 @@ async function main() {
             name: 'Громов Алексей Викторович',
             role: 'Пилот',
             email: 'pilot5@airline.ru',
-            phone: '+7 (999) 777-88-99',
+            phone: '+375 (29) 777-88-99',
         },
     });
 
@@ -103,7 +103,7 @@ async function main() {
             name: 'Ковалёва Мария Сергеевна',
             role: 'Стюардесса',
             email: 'stewardess2@airline.ru',
-            phone: '+7 (999) 888-99-00',
+            phone: '+375 (29) 888-99-00',
         },
     });
 
@@ -112,7 +112,7 @@ async function main() {
             name: 'Романова Елена Александровна',
             role: 'Стюардесса',
             email: 'stewardess3@airline.ru',
-            phone: '+7 (999) 000-11-22',
+            phone: '+375 (29) 000-11-22',
         },
     });
 
@@ -121,7 +121,7 @@ async function main() {
             name: 'Смирнова Ольга Дмитриевна',
             role: 'Стюардесса',
             email: 'stewardess4@airline.ru',
-            phone: '+7 (999) 111-22-44',
+            phone: '+375 (29) 111-22-44',
         },
     });
 
@@ -130,7 +130,7 @@ async function main() {
             name: 'Ильина Наталья Викторовна',
             role: 'Стюардесса',
             email: 'stewardess5@airline.ru',
-            phone: '+7 (999) 222-44-55',
+            phone: '+375 (29) 222-44-55',
         },
     });
 
@@ -139,310 +139,106 @@ async function main() {
             name: 'Сорокин Игорь Павлович',
             role: 'Инженер',
             email: 'engineer2@airline.ru',
-            phone: '+7 (999) 333-55-66',
+            phone: '+375 (29) 333-55-66',
         },
     });
 
-    const flight1 = await prisma.flight.create({
-        data: {
-            from: 'Москва',
-            to: 'Сочи',
-            date: '2025-10-31',
-            time: '12:00',
-            status: 'В ожидании',
-            plane: 'Airbus A320',
-            price: 15000,
-        },
-    });
+    const flightData = [
+        { to: 'Стамбул', date: '2025-12-10', time: '12:00', status: 'В ожидании', plane: 'Airbus A320', price: 550 },
+        { to: 'Варшава', date: '2025-12-11', time: '09:30', status: 'В ожидании', plane: 'Boeing 737', price: 450 },
+        { to: 'Дубай', date: '2025-12-12', time: '15:45', status: 'В пути', plane: 'Airbus A321', price: 700 },
+        { to: 'Тбилиси', date: '2025-12-13', time: '07:15', status: 'В ожидании', plane: 'Boeing 737 MAX', price: 780 },
+        { to: 'Москва', date: '2025-12-14', time: '18:20', status: 'В ожидании', plane: 'Airbus A320neo', price: 600 },
+        { to: 'Париж', date: '2025-12-15', time: '10:40', status: 'В ожидании', plane: 'Boeing 757', price: 850 },
+        { to: 'Берлин', date: '2025-12-16', time: '14:10', status: 'В ожидании', plane: 'Airbus A320', price: 620 },
+        { to: 'Астана', date: '2025-12-17', time: '08:25', status: 'В ожидании', plane: 'Boeing 737-800', price: 680 },
+        { to: 'Рим', date: '2025-12-18', time: '19:00', status: 'В ожидании', plane: 'Airbus A321', price: 720 },
+        { to: 'Лондон', date: '2025-12-19', time: '06:50', status: 'В ожидании', plane: 'Boeing 737 MAX', price: 890 },
+        { to: 'Вильнюс', date: '2025-12-20', time: '11:35', status: 'В ожидании', plane: 'Airbus A319', price: 350 },
+        { to: 'Каир', date: '2025-12-21', time: '13:20', status: 'В ожидании', plane: 'Airbus A321', price: 950 },
+        { to: 'Нью-Йорк', date: '2025-12-22', time: '22:10', status: 'В ожидании', plane: 'Boeing 777', price: 1500 },
+        { to: 'Хельсинки', date: '2025-12-23', time: '08:50', status: 'В ожидании', plane: 'Embraer E190', price: 570 },
+        { to: 'Ереван', date: '2025-12-24', time: '12:35', status: 'В ожидании', plane: 'Airbus A320', price: 790 },
+        { to: 'Ташкент', date: '2025-12-25', time: '07:05', status: 'В ожидании', plane: 'Boeing 737-800', price: 680 },
+        { to: 'Пекин', date: '2025-12-26', time: '09:15', status: 'В ожидании', plane: 'Boeing 787 Dreamliner', price: 1800 },
+        { to: 'Франкфурт', date: '2025-12-27', time: '16:45', status: 'В ожидании', plane: 'Airbus A320neo', price: 750 },
+        { to: 'Батуми', date: '2025-12-28', time: '20:25', status: 'В ожидании', plane: 'Boeing 737', price: 630 },
+        { to: 'Бишкек', date: '2025-12-29', time: '06:30', status: 'В ожидании', plane: 'Airbus A319', price: 590 },
+        { to: 'Амстердам', date: '2025-12-30', time: '12:10', status: 'В ожидании', plane: 'Airbus A321', price: 810 },
+        { to: 'Барселона', date: '2025-12-31', time: '09:55', status: 'В ожидании', plane: 'Boeing 737-800', price: 920 },
+        { to: 'Дели', date: '2026-01-01', time: '07:25', status: 'В ожидании', plane: 'Airbus A320', price: 770 },
+        { to: 'Алматы', date: '2026-01-02', time: '06:40', status: 'В ожидании', plane: 'Boeing 737 MAX', price: 760 },
+        { to: 'Прага', date: '2026-01-03', time: '17:15', status: 'В ожидании', plane: 'Embraer E190', price: 650 },
+        { to: 'Вена', date: '2026-01-04', time: '19:20', status: 'В ожидании', plane: 'Airbus A319', price: 620 },
+        { to: 'Шарм-эш-Шейх', date: '2026-01-05', time: '05:50', status: 'В ожидании', plane: 'Boeing 737', price: 1050 },
+        { to: 'Санкт-Петербург', date: '2026-01-06', time: '08:10', status: 'В ожидании', plane: 'Airbus A320', price: 380 },
+        { to: 'Мюнхен', date: '2026-01-07', time: '13:05', status: 'В ожидании', plane: 'Boeing 737-800', price: 550 },
+        { to: 'Кишинев', date: '2026-01-08', time: '21:15', status: 'В ожидании', plane: 'Airbus A321', price: 470 },
+        { to: 'Баку', date: '2026-01-09', time: '11:30', status: 'В ожидании', plane: 'Airbus A320neo', price: 800 },
+        { to: 'Рига', date: '2026-01-10', time: '06:30', status: 'В ожидании', plane: 'Boeing 737', price: 500 },
+        { to: 'Калининград', date: '2026-01-11', time: '08:45', status: 'В ожидании', plane: 'Embraer E190', price: 330 },
+        { to: 'София', date: '2026-01-12', time: '07:00', status: 'В ожидании', plane: 'Boeing 737-800', price: 580 },
+        { to: 'Тель-Авив', date: '2026-01-13', time: '23:10', status: 'В ожидании', plane: 'Airbus A321', price: 1100 },
+        { to: 'Сеул', date: '2026-01-14', time: '09:00', status: 'В ожидании', plane: 'Boeing 787 Dreamliner', price: 1650 },
+        { to: 'Анкара', date: '2026-01-15', time: '12:25', status: 'В ожидании', plane: 'Airbus A319', price: 430 },
+        { to: 'Вроцлав', date: '2026-01-16', time: '18:50', status: 'В ожидании', plane: 'Airbus A320', price: 400 },
+        { to: 'Торонто', date: '2026-01-17', time: '10:40', status: 'В ожидании', plane: 'Boeing 777', price: 1550 },
+        { to: 'Афины', date: '2026-01-18', time: '15:35', status: 'В ожидании', plane: 'Embraer E190', price: 520 },
+    ];
 
-    const flight2 = await prisma.flight.create({
-        data: {
-            from: 'Санкт-Петербург',
-            to: 'Краснодар',
-            date: '2025-11-01',
-            time: '09:30',
-            status: 'В ожидании',
-            plane: 'Boeing 737',
-            price: 12000,
-        },
-    });
+    const flights = await Promise.all(
+        flightData.map((flight) =>
+            prisma.flight.create({
+                data: {
+                    from: 'Минск',
+                    ...flight,
+                },
+            })
+        )
+    );
 
-    const flight3 = await prisma.flight.create({
-        data: {
-            from: 'Москва',
-            to: 'Екатеринбург',
-            date: '2025-11-02',
-            time: '15:45',
-            status: 'В пути',
-            plane: 'Airbus A321',
-            price: 18000,
-        },
-    });
-
-    const flight4 = await prisma.flight.create({
-        data: {
-            from: 'Казань',
-            to: 'Новосибирск',
-            date: '2025-11-03',
-            time: '07:15',
-            status: 'В ожидании',
-            plane: 'Boeing 737 MAX',
-            price: 20000,
-        },
-    });
-
-    const flight5 = await prisma.flight.create({
-        data: {
-            from: 'Сочи',
-            to: 'Москва',
-            date: '2025-11-04',
-            time: '18:20',
-            status: 'В ожидании',
-            plane: 'Airbus A320neo',
-            price: 15500,
-        },
-    });
-
-    const flight6 = await prisma.flight.create({
-        data: {
-            from: 'Самара',
-            to: 'Санкт-Петербург',
-            date: '2025-11-05',
-            time: '10:40',
-            status: 'В ожидании',
-            plane: 'Boeing 757',
-            price: 17500,
-        },
-    });
-
-    const flight7 = await prisma.flight.create({
-        data: {
-            from: 'Москва',
-            to: 'Калининград',
-            date: '2025-11-06',
-            time: '14:10',
-            status: 'В ожидании',
-            plane: 'Airbus A320',
-            price: 16000,
-        },
-    });
-
-    const flight8 = await prisma.flight.create({
-        data: {
-            from: 'Сочи',
-            to: 'Казань',
-            date: '2025-11-07',
-            time: '08:25',
-            status: 'В ожидании',
-            plane: 'Boeing 737-800',
-            price: 17000,
-        },
-    });
-
-    const flight9 = await prisma.flight.create({
-        data: {
-            from: 'Екатеринбург',
-            to: 'Москва',
-            date: '2025-11-08',
-            time: '19:00',
-            status: 'В ожидании',
-            plane: 'Airbus A321',
-            price: 18500,
-        },
-    });
-
-    const flight10 = await prisma.flight.create({
-        data: {
-            from: 'Новосибирск',
-            to: 'Санкт-Петербург',
-            date: '2025-11-09',
-            time: '06:50',
-            status: 'В ожидании',
-            plane: 'Boeing 737 MAX',
-            price: 22000,
-        },
-    });
-
-    const flight11 = await prisma.flight.create({
-        data: {
-            from: 'Краснодар',
-            to: 'Сочи',
-            date: '2025-11-10',
-            time: '11:35',
-            status: 'В ожидании',
-            plane: 'Airbus A319',
-            price: 9000,
-        },
-    });
-
-    const flight12 = await prisma.flight.create({
-        data: {
-            from: 'Москва',
-            to: 'Стамбул',
-            date: '2025-11-11',
-            time: '13:20',
-            status: 'В ожидании',
-            plane: 'Airbus A321',
-            price: 24000,
-        },
-    });
-
-    const flight13 = await prisma.flight.create({
-        data: {
-            from: 'Москва',
-            to: 'Дубай',
-            date: '2025-11-12',
-            time: '22:10',
-            status: 'В ожидании',
-            plane: 'Boeing 777',
-            price: 42000,
-        },
-    });
-
-    const flight14 = await prisma.flight.create({
-        data: {
-            from: 'Санкт-Петербург',
-            to: 'Хельсинки',
-            date: '2025-11-13',
-            time: '08:50',
-            status: 'В ожидании',
-            plane: 'Embraer E190',
-            price: 19000,
-        },
-    });
-
-    const flight15 = await prisma.flight.create({
-        data: {
-            from: 'Казань',
-            to: 'Ереван',
-            date: '2025-11-14',
-            time: '12:35',
-            status: 'В ожидании',
-            plane: 'Airbus A320',
-            price: 21000,
-        },
-    });
-
-    const flight16 = await prisma.flight.create({
-        data: {
-            from: 'Новосибирск',
-            to: 'Астана',
-            date: '2025-11-15',
-            time: '07:05',
-            status: 'В ожидании',
-            plane: 'Boeing 737-800',
-            price: 17000,
-        },
-    });
-
-    const flight17 = await prisma.flight.create({
-        data: {
-            from: 'Владивосток',
-            to: 'Токио',
-            date: '2025-11-16',
-            time: '09:15',
-            status: 'В ожидании',
-            plane: 'Boeing 787 Dreamliner',
-            price: 52000,
-        },
-    });
-
-    const flight18 = await prisma.flight.create({
-        data: {
-            from: 'Москва',
-            to: 'Берлин',
-            date: '2025-11-17',
-            time: '16:45',
-            status: 'В ожидании',
-            plane: 'Airbus A320neo',
-            price: 30000,
-        },
-    });
-
-    const flight19 = await prisma.flight.create({
-        data: {
-            from: 'Сочи',
-            to: 'Тбилиси',
-            date: '2025-11-18',
-            time: '20:25',
-            status: 'В ожидании',
-            plane: 'Boeing 737',
-            price: 16000,
-        },
-    });
-
-    const flight20 = await prisma.flight.create({
-        data: {
-            from: 'Екатеринбург',
-            to: 'Бишкек',
-            date: '2025-11-19',
-            time: '06:30',
-            status: 'В ожидании',
-            plane: 'Airbus A319',
-            price: 15000,
-        },
-    });
-
-    const flight21 = await prisma.flight.create({
-        data: { from: 'Москва', to: 'Париж', date: '2025-11-20', time: '12:10', status: 'В ожидании', plane: 'Airbus A321', price: 35000 },
-    });
-    const flight22 = await prisma.flight.create({
-        data: { from: 'Санкт-Петербург', to: 'Рим', date: '2025-11-21', time: '09:55', status: 'В ожидании', plane: 'Boeing 737-800', price: 33000 },
-    });
-    const flight23 = await prisma.flight.create({
-        data: { from: 'Казань', to: 'Ташкент', date: '2025-11-22', time: '07:25', status: 'В ожидании', plane: 'Airbus A320', price: 20000 },
-    });
-    const flight24 = await prisma.flight.create({
-        data: { from: 'Новосибирск', to: 'Алматы', date: '2025-11-23', time: '06:40', status: 'В ожидании', plane: 'Boeing 737 MAX', price: 19000 },
-    });
-    const flight25 = await prisma.flight.create({
-        data: { from: 'Екатеринбург', to: 'Минск', date: '2025-11-24', time: '17:15', status: 'В ожидании', plane: 'Embraer E190', price: 17000 },
-    });
-    const flight26 = await prisma.flight.create({
-        data: { from: 'Сочи', to: 'Ереван', date: '2025-11-25', time: '19:20', status: 'В ожидании', plane: 'Airbus A319', price: 16000 },
-    });
-    const flight27 = await prisma.flight.create({
-        data: { from: 'Москва', to: 'Анталья', date: '2025-11-26', time: '05:50', status: 'В ожидании', plane: 'Boeing 737', price: 27000 },
-    });
-    const flight28 = await prisma.flight.create({
-        data: { from: 'Ростов-на-Дону', to: 'Москва', date: '2025-11-27', time: '08:10', status: 'В ожидании', plane: 'Airbus A320', price: 9000 },
-    });
-    const flight29 = await prisma.flight.create({
-        data: { from: 'Уфа', to: 'Санкт-Петербург', date: '2025-11-28', time: '13:05', status: 'В ожидании', plane: 'Boeing 737-800', price: 11000 },
-    });
-    const flight30 = await prisma.flight.create({
-        data: { from: 'Самара', to: 'Сочи', date: '2025-11-29', time: '21:15', status: 'В ожидании', plane: 'Airbus A321', price: 12000 },
-    });
-    const flight31 = await prisma.flight.create({
-        data: { from: 'Москва', to: 'Баку', date: '2025-11-30', time: '11:30', status: 'В ожидании', plane: 'Airbus A320neo', price: 23000 },
-    });
-    const flight32 = await prisma.flight.create({
-        data: { from: 'Санкт-Петербург', to: 'Тбилиси', date: '2025-12-01', time: '06:30', status: 'В ожидании', plane: 'Boeing 737', price: 20000 },
-    });
-    const flight33 = await prisma.flight.create({
-        data: { from: 'Пермь', to: 'Москва', date: '2025-12-02', time: '08:45', status: 'В ожидании', plane: 'Embraer E190', price: 8000 },
-    });
-    const flight34 = await prisma.flight.create({
-        data: { from: 'Красноярск', to: 'Екатеринбург', date: '2025-12-03', time: '07:00', status: 'В ожидании', plane: 'Boeing 737-800', price: 13000 },
-    });
-    const flight35 = await prisma.flight.create({
-        data: { from: 'Москва', to: 'Тель-Авив', date: '2025-12-04', time: '23:10', status: 'В ожидании', plane: 'Airbus A321', price: 37000 },
-    });
-    const flight36 = await prisma.flight.create({
-        data: { from: 'Владивосток', to: 'Сеул', date: '2025-12-05', time: '09:00', status: 'В ожидании', plane: 'Boeing 787 Dreamliner', price: 48000 },
-    });
-    const flight37 = await prisma.flight.create({
-        data: { from: 'Омск', to: 'Новосибирск', date: '2025-12-06', time: '12:25', status: 'В ожидании', plane: 'Airbus A319', price: 7000 },
-    });
-    const flight38 = await prisma.flight.create({
-        data: { from: 'Калининград', to: 'Москва', date: '2025-12-07', time: '18:50', status: 'В ожидании', plane: 'Airbus A320', price: 10000 },
-    });
-    const flight39 = await prisma.flight.create({
-        data: { from: 'Москва', to: 'Лондон', date: '2025-12-08', time: '10:40', status: 'В ожидании', plane: 'Boeing 777', price: 45000 },
-    });
-    const flight40 = await prisma.flight.create({
-        data: { from: 'Сочи', to: 'Минеральные Воды', date: '2025-12-09', time: '15:35', status: 'В ожидании', plane: 'Embraer E190', price: 6000 },
-    });
+    const [
+        flight1,
+        flight2,
+        flight3,
+        flight4,
+        flight5,
+        flight6,
+        flight7,
+        flight8,
+        flight9,
+        flight10,
+        flight11,
+        flight12,
+        flight13,
+        flight14,
+        flight15,
+        flight16,
+        flight17,
+        flight18,
+        flight19,
+        flight20,
+        flight21,
+        flight22,
+        flight23,
+        flight24,
+        flight25,
+        flight26,
+        flight27,
+        flight28,
+        flight29,
+        flight30,
+        flight31,
+        flight32,
+        flight33,
+        flight34,
+        flight35,
+        flight36,
+        flight37,
+        flight38,
+        flight39,
+        flight40,
+    ] = flights;
 
     await prisma.crewMember.createMany({
         data: [
