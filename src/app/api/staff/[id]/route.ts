@@ -16,14 +16,6 @@ export async function PUT(
             );
         }
 
-        // Валидация: запрет российских номеров телефонов (+7)
-        if (phone && (phone.startsWith('+7') || phone.startsWith('7 ') || phone.match(/^7\s*\(/))) {
-            return NextResponse.json(
-                { error: 'Российские номера телефонов не допускаются. Используйте белорусский формат: +375 (XX) XXX-XX-XX' },
-                { status: 400 }
-            );
-        }
-
         const staff = await db.staff.update({
             where: { id },
             data: {
